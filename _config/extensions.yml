@@ -1,0 +1,12 @@
+---
+Name: swiftype-extension
+---
+SiteConfig:
+  extensions:
+    - SwiftypeSiteConfig
+SiteTree:
+  extensions:
+    - SwiftypeSiteTree
+ContentController:
+  extensions:
+    - ContentExtension

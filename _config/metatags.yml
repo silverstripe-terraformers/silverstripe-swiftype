@@ -1,0 +1,7 @@
+Ichaber\SilverStripe\Swiftype\Extensions\ContentExtension:
+  swiftypeMetaTags:
+    'Body',
+    'PublishedAt',
+    'Title',
+    'UpdatedAt',
+    'URL'

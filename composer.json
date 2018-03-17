@@ -1,11 +1,12 @@
 {
   "name": "ichaber/silverstripe-swiftype",
   "description": "Use Swiftype search with Silverstripe",
-  "type": "silverstripe-module",
+  "type": "silverstripe-vendormodule",
   "homepage": "http://github.com/ichaber/silverstripe-swiftype",
   "keywords": ["silverstripe", "swiftype", "search"],
   "license": "BSD-3-Clause",
   "authors": [
+    {"name": "Chris Penny","email": "cpenny@silverstripe.com"},
     {"name": "Charlie Bergthaler","email": "charlie@silverstripe.com"}
   ],
   "support": {

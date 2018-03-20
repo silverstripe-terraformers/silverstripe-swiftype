@@ -7,6 +7,11 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 
 class SwiftypeMetaTag
 {
+    /**
+     * Default date format used for formatting SilverStripe\ORM\FieldType\DBDatetime fields
+     * @var string
+     */
+    protected static $dateFormat = 'YYYY-MM-dd HH:mm:ss';
 
     /**
      * @var null|string
@@ -44,7 +49,7 @@ class SwiftypeMetaTag
 
         if ($dataObject->hasValue($fieldName)) {
             if ($dataObject->obj($fieldName) instanceof DBDatetime) {
-                return $dataObject->obj($fieldName)->format('Y-m-d\TH:i:s');
+                return $dataObject->obj($fieldName)->format(self::$dateFormat);
             }
 
             return $dataObject->$fieldName;

@@ -1,7 +1,8 @@
-Ichaber\SilverStripe\Swiftype\Extensions\ContentExtension:
-  swiftypeMetaTags:
-    'Body',
-    'PublishedAt',
-    'Title',
-    'UpdatedAt',
-    'URL'
+Ichaber\SSSwiftype\Extensions\ContentExtension:
+  namespace: 'Ichaber\SSSwiftype\MetaTags\'
+  metaClasses:
+    - 'SwiftypeMetaTag_Body'
+    - 'SwiftypeMetaTag_PublishedAt'
+    - 'SwiftypeMetaTag_Title'
+    - 'SwiftypeMetaTag_UpdatedAt'
+    - 'SwiftypeMetaTag_URL'

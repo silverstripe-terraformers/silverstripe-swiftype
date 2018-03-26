@@ -2,6 +2,10 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use SilverStripe\CMS\Model\SiteTreeExtension;
+use SilverStripe\Control\Director;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Core\Injector\Injector;
+use Psr\Log\LoggerInterface;
 
 class SwiftypeSiteTree extends SiteTreeExtension {
 
@@ -37,6 +41,7 @@ class SwiftypeSiteTree extends SiteTreeExtension {
             return true;
         }
 
+        $logger = $this->getLogger();
         $config = SiteConfig::current_site_config();
 
         $engineSlug = $config->SwiftypeEngineSlug;
@@ -44,31 +49,30 @@ class SwiftypeSiteTree extends SiteTreeExtension {
         $apiKey = $config->SwiftypeAPIKey;
 
         if (!$engineSlug) {
-            SS_Log::log(
-                'Swiftype Engine Slug value has not been set. Settings > Swiftype Search > Swiftype Engine Slug',
-                SS_Log::WARN
+            $logger->warning(
+                'Swiftype Engine Slug value has not been set. Settings > Swiftype Search > Swiftype Engine Slug'
             );
 
             return false;
         }
 
         if (!$domainID) {
-            SS_Log::log(
-                'Swiftype Domain ID has not been set. Settings > Swiftype Search > Swiftype Domain ID',
-                SS_Log::WARN
+            $logger->warning(
+                'Swiftype Domain ID has not been set. Settings > Swiftype Search > Swiftype Domain ID'
             );
 
             return false;
         }
 
         if (!$apiKey) {
-            SS_Log::log(
-                'Swiftype API Key has not been set. Settings > Swiftype Search > Swiftype Production API Key',
-                SS_Log::WARN
+            $logger->warning(
+                'Swiftype API Key has not been set. Settings > Swiftype Search > Swiftype Production API Key'
             );
 
             return false;
         }
+
+        $updateUrl = $this->getOwner()->getAbsoluteLiveLink();
 
         // Create curl resource.
         $ch = curl_init();
@@ -91,7 +95,7 @@ class SwiftypeSiteTree extends SiteTreeExtension {
         // Set our PUT values.
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array(
             'auth_token' => $apiKey,
-            'url' => $this->getAbsoluteLiveLink(),
+            'url' => $updateUrl,
         )));
 
         // $output contains the output string.
@@ -101,14 +105,22 @@ class SwiftypeSiteTree extends SiteTreeExtension {
         curl_close($ch);
 
         if (!$output) {
-            SS_Log::log(
-                'We got no response from Swiftype for reindexing page: ' . $this->getAbsoluteLiveLink(),
-                SS_Log::WARN
+            $logger->warning(
+                'We got no response from Swiftype for reindexing page: ' . $updateUrl
             );
 
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * @return LoggerInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    protected function getLogger()
+    {
+        return Injector::inst()->get(LoggerInterface::class);
     }
 }

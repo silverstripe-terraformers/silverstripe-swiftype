@@ -54,7 +54,7 @@ class SwiftypeSiteConfig extends DataExtension
                 CheckboxField::create('SwiftypeEnabled', 'Swiftype Search Enabled')
                     ->setDescription('Turning this off will mean that search is disabled and JS will not be loaded.'),
                 TextField::create('SwiftypeAPIKey', 'Swiftype API Key'),
-                TextField::create('SwiftypeEngineSlug/ID', 'Swiftype Engine Slug'),
+                TextField::create('SwiftypeEngineSlug', 'Swiftype Engine Slug'),
                 TextField::create('SwiftypeEngineKey', 'Swiftype Engine Key'),
                 TextField::create('SwiftypeDomainID', 'Swiftype Domain ID'),
                 TextField::create('SwiftypeAccessKey', 'Swiftype Access Key'),

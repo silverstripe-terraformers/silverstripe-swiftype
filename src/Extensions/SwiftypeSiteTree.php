@@ -1,6 +1,8 @@
 <?php
 namespace Ichaber\SSSwiftype\Extensions;
 
+use function array_key_exists;
+use Exception;
 use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Control\Director;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -49,24 +51,30 @@ class SwiftypeSiteTree extends SiteTreeExtension {
         $apiKey = $config->SwiftypeAPIKey;
 
         if (!$engineSlug) {
+            $trace = debug_backtrace();
             $logger->warning(
-                'Swiftype Engine Slug value has not been set. Settings > Swiftype Search > Swiftype Engine Slug'
+                'Swiftype Engine Slug value has not been set. Settings > Swiftype Search > Swiftype Engine Slug',
+                array_shift($trace) //Add context (for RaygunHandler) by using the last item on the stack trace.
             );
 
             return false;
         }
 
         if (!$domainID) {
+            $trace = debug_backtrace();
             $logger->warning(
-                'Swiftype Domain ID has not been set. Settings > Swiftype Search > Swiftype Domain ID'
+                'Swiftype Domain ID has not been set. Settings > Swiftype Search > Swiftype Domain ID',
+                array_shift($trace) //Add context (for RaygunHandler) by using the last item on the stack trace.
             );
 
             return false;
         }
 
         if (!$apiKey) {
+            $trace = debug_backtrace();
             $logger->warning(
-                'Swiftype API Key has not been set. Settings > Swiftype Search > Swiftype Production API Key'
+                'Swiftype API Key has not been set. Settings > Swiftype Search > Swiftype Production API Key',
+                array_shift($trace) //Add context (for RaygunHandler) by using the last item on the stack trace.
             );
 
             return false;
@@ -105,14 +113,25 @@ class SwiftypeSiteTree extends SiteTreeExtension {
         curl_close($ch);
 
         if (!$output) {
+            $trace = debug_backtrace();
             $logger->warning(
-                'We got no response from Swiftype for reindexing page: ' . $updateUrl
+                'We got no response from Swiftype for reindexing page: ' . $updateUrl,
+                array_shift($trace) //Add context (for RaygunHandler) by using the last item on the stack trace.
             );
 
             return false;
         }
+        $jsonOutput = json_decode($output, true);
+        if (!empty($jsonOutput) && array_key_exists('error', $jsonOutput)) {
+            $message = $jsonOutput['error'];
+            $context = ['exception' => new Exception($message)];
 
-        return true;
+            //Add context (for RaygunHandler) by using the last item on the stack trace.
+            $logger->warning($message, $context);
+            return false;
+        }
+
+        return false;
     }
 
     /**

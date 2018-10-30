@@ -3,11 +3,11 @@
 namespace Ichaber\SSSwiftype\MetaTags;
 
 /**
- * Class SwiftypeMetaTag_PublishedAt
+ * Class SwiftypeMetaTagPublishedAt
  *
  * @package Ichaber\SSSwiftype\MetaTags
  */
-class SwiftypeMetaTag_PublishedAt extends SwiftypeMetaTag
+class SwiftypeMetaTagPublishedAt extends SwiftypeMetaTag
 {
     /**
      * @var string

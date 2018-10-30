@@ -3,24 +3,24 @@
 namespace Ichaber\SSSwiftype\MetaTags;
 
 /**
- * Class SwiftypeMetaTag_UpdatedAt
+ * Class SwiftypeMetaTagTitle
  *
  * @package Ichaber\SSSwiftype\MetaTags
  */
-class SwiftypeMetaTag_UpdatedAt extends SwiftypeMetaTag
+class SwiftypeMetaTagTitle extends SwiftypeMetaTag
 {
     /**
      * @var string
      */
-    protected $name = 'updated_at';
+    protected $name = 'title';
 
     /**
      * @var null|string
      */
-    protected $fieldName = 'LastEdited';
+    protected $fieldName = 'Title';
 
     /**
      * @var null|string
      */
-    protected $fieldType = 'date';
+    protected $fieldType = 'string';
 }

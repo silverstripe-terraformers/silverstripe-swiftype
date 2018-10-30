@@ -3,21 +3,21 @@
 namespace Ichaber\SSSwiftype\MetaTags;
 
 /**
- * Class SwiftypeMetaTag_Title
+ * Class SwiftypeMetaTagURL
  *
  * @package Ichaber\SSSwiftype\MetaTags
  */
-class SwiftypeMetaTag_Title extends SwiftypeMetaTag
+class SwiftypeMetaTagURL extends SwiftypeMetaTag
 {
     /**
      * @var string
      */
-    protected $name = 'title';
+    protected $name = 'url';
 
     /**
      * @var null|string
      */
-    protected $fieldName = 'Title';
+    protected $fieldName = 'Link';
 
     /**
      * @var null|string

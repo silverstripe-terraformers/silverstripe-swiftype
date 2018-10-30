@@ -2,11 +2,8 @@
 
 namespace Ichaber\SSSwiftype\Extensions;
 
-use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\Assets\Image;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataExtension;
@@ -14,10 +11,18 @@ use SilverStripe\ORM\DataExtension;
 /**
  * Some default things to set up
  *
+ * Class SwiftypeSiteConfigFieldsExtension
+ *
+ * @package Ichaber\SSSwiftype\Extensions
+ * @property bool $SwiftypeEnabled
+ * @property string $SwiftypeAccessKey
+ * @property string $SwiftypeAPIKey
+ * @property string $SwiftypeEngineKey
+ * @property string $SwiftypeDomainID
+ * @property string $SwiftypeEngineSlug
  */
-class SwiftypeSiteConfig extends DataExtension
+class SwiftypeSiteConfigFieldsExtension extends DataExtension
 {
-
     /**
      * @var array $db
      */
@@ -27,13 +32,8 @@ class SwiftypeSiteConfig extends DataExtension
         'SwiftypeAPIKey' => 'Varchar(255)',
         'SwiftypeEngineKey' => 'Varchar(255)',
         'SwiftypeDomainID' => 'Varchar(255)',
-        'SwiftypeEngineSlug' => 'Varchar(255)'
+        'SwiftypeEngineSlug' => 'Varchar(255)',
     ];
-
-    /**
-     * @var array $has_many
-     */
-    private static $has_many = [];
 
     /**
      * Settings and CMS form fields for CMS the admin/settings area
@@ -41,16 +41,17 @@ class SwiftypeSiteConfig extends DataExtension
      * @param FieldList $fields
      * @return void
      */
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
-
         // Swiftype Search Tab
         $fields->addFieldsToTab(
             'Root.SwiftypeSearch',
-            array(
-                LiteralField::create('',
+            [
+                LiteralField::create(
+                    '',
                     '<h3>Swiftype Search Settings</h3>
-                    <h4>This is a danger zone! Do not change anything here unless you know what you are doing.</h4>'),
+                    <h4>This is a danger zone! Do not change anything here unless you know what you are doing.</h4>'
+                ),
                 CheckboxField::create('SwiftypeEnabled', 'Swiftype Search Enabled')
                     ->setDescription('Turning this off will mean that search is disabled and JS will not be loaded.'),
                 TextField::create('SwiftypeAPIKey', 'Swiftype API Key'),
@@ -58,7 +59,7 @@ class SwiftypeSiteConfig extends DataExtension
                 TextField::create('SwiftypeEngineKey', 'Swiftype Engine Key'),
                 TextField::create('SwiftypeDomainID', 'Swiftype Domain ID'),
                 TextField::create('SwiftypeAccessKey', 'Swiftype Access Key'),
-            )
+            ]
         );
     }
 }

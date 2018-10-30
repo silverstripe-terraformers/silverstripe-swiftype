@@ -2,13 +2,20 @@
 
 namespace Ichaber\SSSwiftype\MetaTags;
 
+use Ichaber\SSSwiftype\Interfaces\SwiftypeMetaTagInterface;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
-class SwiftypeMetaTag
+/**
+ * Class SwiftypeMetaTag
+ *
+ * @package Ichaber\SSSwiftype\MetaTags
+ */
+abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 {
     /**
      * Default date format used for formatting SilverStripe\ORM\FieldType\DBDatetime fields
+     *
      * @var string
      */
     protected static $dateFormat = 'YYYY-MM-dd HH:mm:ss';
@@ -16,31 +23,30 @@ class SwiftypeMetaTag
     /**
      * @var null|string
      */
-    protected $name = null;
+    protected $name;
 
     /**
      * @var null|string
      */
-    protected $fieldName = null;
+    protected $fieldName;
 
     /**
      * @var null|string
      */
-    protected $fieldType = null;
+    protected $fieldType;
 
     /**
      * @param DataObject $dataObject
-     *
-     * @return mixed|null
+     * @return string|null
      */
-    protected function getFieldValue(DataObject $dataObject)
+    protected function getFieldValue(DataObject $dataObject): ?string
     {
         if ($this->fieldName === null) {
             return null;
         }
 
         $fieldName = $this->fieldName;
-        $methodName = $fieldName;
+        $methodName = $this->fieldName;
         $value = null;
 
         if ($dataObject->hasMethod($methodName)) {
@@ -62,20 +68,23 @@ class SwiftypeMetaTag
      * @param string $name
      * @param string $fieldType
      * @param string $value
-     *
      * @return string
      */
-    protected function generateMetaTagsString($name, $fieldType, $value)
+    protected function generateMetaTagsString(string $name, string $fieldType, string $value): string
     {
-        return '<meta class="swiftype" name="' . $name . '" data-type="' . $fieldType . '" content="' . $value . '" />';
+        return sprintf(
+            '<meta class="swiftype" name="%s" data-type="%s" content="%s" />',
+            $name,
+            $fieldType,
+            $value
+        );
     }
 
     /**
      * @param DataObject $dataObject
-     *
      * @return null|string
      */
-    public function getMetaTagsString(DataObject $dataObject)
+    public function getMetaTagString(DataObject $dataObject): ?string
     {
         if ($this->name === null) {
             return null;

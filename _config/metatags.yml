@@ -1,8 +1,0 @@
-Ichaber\SSSwiftype\Extensions\ContentExtension:
-  namespace: 'Ichaber\SSSwiftype\MetaTags\'
-  metaClasses:
-    - 'SwiftypeMetaTag_Body'
-    - 'SwiftypeMetaTag_PublishedAt'
-    - 'SwiftypeMetaTag_Title'
-    - 'SwiftypeMetaTag_UpdatedAt'
-    - 'SwiftypeMetaTag_URL'

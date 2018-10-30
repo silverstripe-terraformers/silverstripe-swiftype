@@ -2,9 +2,13 @@
 
 namespace Ichaber\SSSwiftype\MetaTags;
 
+/**
+ * Class SwiftypeMetaTag_UpdatedAt
+ *
+ * @package Ichaber\SSSwiftype\MetaTags
+ */
 class SwiftypeMetaTag_UpdatedAt extends SwiftypeMetaTag
 {
-
     /**
      * @var string
      */

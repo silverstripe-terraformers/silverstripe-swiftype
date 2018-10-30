@@ -2,7 +2,6 @@
 
 namespace Ichaber\SSSwiftype\MetaTags;
 
-use Ichaber\SSSwiftype\Interfaces\SwiftypeMetaTagInterface;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 

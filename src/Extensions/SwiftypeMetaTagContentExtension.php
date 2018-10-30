@@ -3,9 +3,10 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use Exception;
-use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag;
+use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagInterface;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBField;
 
 /**
  * Class SwiftypeMetaTagContentExtension
@@ -16,25 +17,25 @@ use SilverStripe\ORM\DataObject;
 class SwiftypeMetaTagContentExtension extends DataExtension
 {
     /**
-     * @return string
+     * @return DBField
      * @throws Exception
      */
-    public function getSwiftypeMetaTags(): string
+    public function getSwiftypeMetaTags(): DBField
     {
         // See the README and/or model.yml for examples on how to implement swiftype_meta_tag_classes to different
         // Objects.
         $metaClasses = $this->owner->config()->get('swiftype_meta_tag_classes');
         $metaTags = [];
 
-        foreach ($metaClasses as $className) {
-            if (!class_exists($className)) {
-                throw new Exception(sprintf('Requested MetaTag class could not be found: %s', $className));
-            }
+        if (count($metaClasses) === 0) {
+            return DBField::create_field('HTMLText', '');
+        }
 
+        foreach ($metaClasses as $className) {
             $metaTag = new $className();
 
-            if (!$metaTag instanceof SwiftypeMetaTag) {
-                throw new Exception('All swiftype_meta_classes must be instance of SwiftypeMetaTag');
+            if (!$metaTag instanceof SwiftypeMetaTagInterface) {
+                throw new Exception('All swiftype_meta_classes must implement SwiftypeMetaTagInterface');
             }
 
             $tagsString = $metaTag->getMetaTagString($this->owner);
@@ -46,6 +47,6 @@ class SwiftypeMetaTagContentExtension extends DataExtension
             $metaTags[] = $tagsString;
         }
 
-        return implode("\r\n", $metaTags);
+        return DBField::create_field('HTMLText', implode("\r\n", $metaTags));
     }
 }

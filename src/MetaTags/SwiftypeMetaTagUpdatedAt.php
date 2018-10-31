@@ -15,12 +15,12 @@ class SwiftypeMetaTagUpdatedAt extends SwiftypeMetaTag
     protected $name = 'updated_at';
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $fieldName = 'LastEdited';
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $fieldType = 'date';
 }

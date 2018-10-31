@@ -36,9 +36,9 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 
     /**
      * @param DataObject $dataObject
-     * @return string|null
+     * @return string|int|null
      */
-    protected function getFieldValue(DataObject $dataObject): ?string
+    protected function getFieldValue(DataObject $dataObject)
     {
         if ($this->fieldName === null) {
             return null;
@@ -54,7 +54,7 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 
         if ($dataObject->hasValue($fieldName)) {
             if ($dataObject->obj($fieldName) instanceof DBDatetime) {
-                return $dataObject->obj($fieldName)->format(self::$dateFormat);
+                return $dataObject->obj($fieldName)->format(static::$dateFormat);
             }
 
             return $dataObject->$fieldName;

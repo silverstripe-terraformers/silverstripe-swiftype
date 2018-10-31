@@ -15,12 +15,12 @@ class SwiftypeMetaTagTitle extends SwiftypeMetaTag
     protected $name = 'title';
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $fieldName = 'Title';
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $fieldType = 'string';
 }

@@ -22,8 +22,7 @@ class SwiftypeMetaTagContentExtension extends DataExtension
      */
     public function getSwiftypeMetaTags(): DBField
     {
-        // See the README and/or model.yml for examples on how to implement swiftype_meta_tag_classes to different
-        // Objects.
+        // See the README for examples on how to implement swiftype_meta_tag_classes to different Objects.
         $metaClasses = $this->owner->config()->get('swiftype_meta_tag_classes');
         $metaTags = [];
 

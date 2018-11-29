@@ -58,7 +58,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
 
         // You might want to implement this via Environment variables or something. Just make sure SiteConfig has access
         // to that variable, and return it here.
-        $swiftypeEnabled = $config->relField('SwiftypeEnabled');
+        $swiftypeEnabled = (bool) $config->relField('SwiftypeEnabled');
 
         // If you have multiple Engines per site (maybe you use Fluent with a different Engine on each Locale), then
         // this provides some basic ability to have different credentials returned based on the application state.

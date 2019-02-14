@@ -123,5 +123,6 @@ You can also feel free to extend `SwiftypeMetaTag`, if you would like access to 
 
 ## Requirements
 
+ * PHP 7.1 or higher
  * SilverStripe Framework 4.x
  * SilverStripe CMS 4.x

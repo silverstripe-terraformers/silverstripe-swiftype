@@ -2,21 +2,25 @@
 
 namespace Ichaber\SSSwiftype\MetaTags;
 
-class SwiftypeMetaTag_Title extends SwiftypeMetaTag
+/**
+ * Class SwiftypeMetaTagTitle
+ *
+ * @package Ichaber\SSSwiftype\MetaTags
+ */
+class SwiftypeMetaTagTitle extends SwiftypeMetaTag
 {
-
     /**
      * @var string
      */
     protected $name = 'title';
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $fieldName = 'Title';
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $fieldType = 'string';
 }

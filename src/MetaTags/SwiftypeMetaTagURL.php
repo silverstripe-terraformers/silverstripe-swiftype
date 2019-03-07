@@ -22,5 +22,5 @@ class SwiftypeMetaTagURL extends SwiftypeMetaTag
     /**
      * @var string
      */
-    protected $fieldType = 'string';
+    protected $fieldType = 'enum';
 }

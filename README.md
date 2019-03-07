@@ -20,11 +20,11 @@ The code also provides an extension which triggers a re-index after a page is pu
 There are a bunch of standard `SwiftypeMetaTag` classes. Each of these classes represents one of the standard SilverStripe SiteTree fields *or methods*, and will be used to output a single meta tag into your markup.
 
 Here are the standard classes, and which SiteTree field/method they represent:
-- SwiftypeMetaTag_Description (`MetaDescription` field)
-- SwiftypeMetaTag_PublishedAt (`Created` field)
-- SwiftypeMetaTag_Title (`Title` field)
-- SwiftypeMetaTag_UpdatedAt (`LastEdited` field)
-- SwiftypeMetaTag_URL (`Link()` method)
+- SwiftypeMetaTagDescription (`MetaDescription` field)
+- SwiftypeMetaTagPublishedAt (`Created` field)
+- SwiftypeMetaTagTitle (`Title` field)
+- SwiftypeMetaTagUpdatedAt (`LastEdited` field)
+- SwiftypeMetaTagURL (`Link()` method)
 
 ### Templating
 
@@ -63,11 +63,11 @@ In a config yaml:
 ```yml
 App\Page\MyPage:
   swiftype_meta_tag_classes:
-    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag_Description
-    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag_PublishedAt
-    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag_Title
-    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag_UpdatedAt
-    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag_URL
+    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagDescription
+    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagPublishedAt
+    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagTitle
+    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagUpdatedAt
+    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagURL
 ```
 
 Or in your model:
@@ -78,11 +78,11 @@ class MyPage extends SiteTree
      * @var array
      */
     private static $swiftype_meta_tag_classes = [
-        SwiftypeMetaTag_Description::class,
-        SwiftypeMetaTag_PublishedAt::class,
-        SwiftypeMetaTag_Title::class,
-        SwiftypeMetaTag_UpdatedAt::class,
-        SwiftypeMetaTag_URL::class,
+        SwiftypeMetaTagDescription::class,
+        SwiftypeMetaTagPublishedAt::class,
+        SwiftypeMetaTagTitle::class,
+        SwiftypeMetaTagUpdatedAt::class,
+        SwiftypeMetaTagURL::class,
     ];
 }
 ```

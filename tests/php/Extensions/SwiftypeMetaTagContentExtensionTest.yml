@@ -1,0 +1,5 @@
+Ichaber\SSSwiftype\Tests\Fake\SwiftypeSiteTree:
+  page1:
+    URLSegment: page1
+    Title: Page 1
+    MetaDescription: Page 1 Meta Description

@@ -54,7 +54,7 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 
         if ($dataObject->hasValue($fieldName)) {
             if ($dataObject->obj($fieldName) instanceof DBDatetime) {
-                return $dataObject->obj($fieldName)->format($this->config()->get('DateFormat'));
+                return $dataObject->obj($fieldName)->format($this->config()->get('date_format'));
             }
 
             return $dataObject->$fieldName;

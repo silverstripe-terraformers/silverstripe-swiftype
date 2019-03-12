@@ -29,6 +29,6 @@ class SwiftypeMetaTagURL extends SwiftypeMetaTag
      */
     protected function getFieldValue(DataObject $dataObject, ?string $fieldName = null)
     {
-        return parent::getFieldValue($dataObject, $this->config()->get('FieldName'));
+        return parent::getFieldValue($dataObject, $this->config()->get('field_name'));
     }
 }

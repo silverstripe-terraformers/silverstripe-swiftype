@@ -2,6 +2,7 @@
 
 namespace Ichaber\SSSwiftype\MetaTags;
 
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
@@ -9,15 +10,11 @@ use SilverStripe\ORM\FieldType\DBDatetime;
  * Class SwiftypeMetaTag
  *
  * @package Ichaber\SSSwiftype\MetaTags
+ * @see _config/model.yml for DateFormat definition.
  */
 abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 {
-    /**
-     * Default date format used for formatting SilverStripe\ORM\FieldType\DBDatetime fields
-     *
-     * @var string
-     */
-    protected static $dateFormat = 'YYYY-MM-dd HH:mm:ss';
+    use Configurable;
 
     /**
      * @var null|string
@@ -36,25 +33,28 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 
     /**
      * @param DataObject $dataObject
+     * @param string|null $fieldName
      * @return string|int|null
      */
-    protected function getFieldValue(DataObject $dataObject)
+    protected function getFieldValue(DataObject $dataObject, ?string $fieldName = null)
     {
-        if ($this->fieldName === null) {
+        if ($fieldName === null) {
+            $fieldName = $this->fieldName;
+        }
+
+        if ($fieldName === null) {
             return null;
         }
 
-        $fieldName = $this->fieldName;
-        $methodName = $this->fieldName;
         $value = null;
 
-        if ($dataObject->hasMethod($methodName)) {
-            return $dataObject->$methodName();
+        if ($dataObject->hasMethod($fieldName)) {
+            return $dataObject->$fieldName();
         }
 
         if ($dataObject->hasValue($fieldName)) {
             if ($dataObject->obj($fieldName) instanceof DBDatetime) {
-                return $dataObject->obj($fieldName)->format(static::$dateFormat);
+                return $dataObject->obj($fieldName)->format($this->config()->get('date_format'));
             }
 
             return $dataObject->$fieldName;

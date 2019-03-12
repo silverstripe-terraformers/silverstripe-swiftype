@@ -1,0 +1,7 @@
+---
+Name: swiftype_tags
+---
+Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag:
+  date_format: YYYY-MM-dd HH:mm:ss
+Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagURL:
+  field_name: Link

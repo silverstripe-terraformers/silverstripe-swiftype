@@ -2,10 +2,13 @@
 
 namespace Ichaber\SSSwiftype\MetaTags;
 
+use SilverStripe\ORM\DataObject;
+
 /**
  * Class SwiftypeMetaTagURL
  *
  * @package Ichaber\SSSwiftype\MetaTags
+ * @see _config/model.yml for FieldName definition. You can override this if you wish to use (for example) AbsoluteLink.
  */
 class SwiftypeMetaTagURL extends SwiftypeMetaTag
 {
@@ -17,10 +20,15 @@ class SwiftypeMetaTagURL extends SwiftypeMetaTag
     /**
      * @var string
      */
-    protected $fieldName = 'AbsoluteLink';
+    protected $fieldType = 'enum';
 
     /**
-     * @var string
+     * @param DataObject $dataObject
+     * @param string|null $fieldName
+     * @return string|int|null
      */
-    protected $fieldType = 'enum';
+    protected function getFieldValue(DataObject $dataObject, ?string $fieldName = null)
+    {
+        return parent::getFieldValue($dataObject, $this->config()->get('field_name'));
+    }
 }

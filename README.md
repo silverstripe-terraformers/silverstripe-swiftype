@@ -38,6 +38,10 @@ _Note: At the time of writing this, Swiftype did not support re-crawling existin
 
 ## Installation
 
+```
+composer require ichaber/silverstripe-swiftype
+```
+
 ### Simple
 
 If you just want to plug and play, then apply the following three extensions.

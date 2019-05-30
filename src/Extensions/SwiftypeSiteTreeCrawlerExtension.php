@@ -10,6 +10,7 @@ use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Versioned\Versioned;
 
 /**
  * Class SwiftypeSiteTreeCrawlerExtension
@@ -26,14 +27,18 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
     {
         parent::onAfterPublish($original);
 
-        $this->forceSwiftypeIndex();
+        $this->withVersionContext(function() {
+            $this->forceSwiftypeIndex();
+        });
     }
 
     public function onAfterUnpublish(): void
     {
         parent::onAfterUnpublish();
 
-        $this->forceSwiftypeIndex();
+        $this->withVersionContext(function() {
+            $this->forceSwiftypeIndex();
+        });
     }
 
     /**
@@ -107,7 +112,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
             return false;
         }
 
-        $updateUrl = $this->getOwner()->getAbsoluteLiveLink();
+        $updateUrl = $this->getOwner()->getAbsoluteLiveLink(false);
 
         // Create curl resource.
         $ch = curl_init();
@@ -177,5 +182,22 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
     protected function getLogger(): LoggerInterface
     {
         return Injector::inst()->get(LoggerInterface::class);
+    }
+
+    /**
+     * Sets the version context to Live as that's what crawlers will (normally) see
+     * the main function is to suppress teh ?stage=Live querystring
+     *
+     * @param callable $callback
+     * @return void
+     */
+    private function withVersionContext(callable $callback) {
+        Versioned::withVersionedMode(function() use ($callback) {
+            $originalReadingMode = Versioned::get_default_reading_mode();
+            Versioned::set_stage(Versioned::LIVE);
+            Versioned::set_default_reading_mode(Versioned::get_reading_mode());
+            $callback();
+            Versioned::set_default_reading_mode($originalReadingMode);
+        });
     }
 }

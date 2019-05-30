@@ -32,6 +32,11 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
     {
         parent::onAfterUnpublish();
 
+        // If the page has been entirely removed we don't have a url
+        if ($this->getOwner()->getAbsoluteLiveLink() === null) {
+            return;
+        }
+
         $this->forceSwiftypeIndex();
     }
 

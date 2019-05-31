@@ -20,25 +20,51 @@ use SilverStripe\Versioned\Versioned;
  */
 class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
 {
+
+    /**
+     * Urls to crawl
+     *
+     * array keyed by getOwnerKey
+     *
+     * @var array
+     */
+    private $urlsToCrawl = [];
+
     /**
      * @param SiteTree|mixed $original
+     * @return void
      */
     public function onAfterPublish(&$original): void
     {
         parent::onAfterPublish($original);
 
-        $this->withVersionContext(function() {
-            $this->forceSwiftypeIndex();
-        });
+        $this->collateUrls();
+        $key = $this->getOwnerKey();
+        $urls = $this->getUrlsToCrawl();
+        foreach ($urls[$key] as $url)  {
+            $this->forceSwiftypeIndex($url);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function onBeforeUnpublish()
+    {
+        parent::onBeforeUnpublish();
+
+        $this->collateUrls();
     }
 
     public function onAfterUnpublish(): void
     {
         parent::onAfterUnpublish();
 
-        $this->withVersionContext(function() {
-            $this->forceSwiftypeIndex();
-        });
+        $key = $this->getOwnerKey();
+        $urls = $this->getUrlsToCrawl();
+        foreach ($urls[$key] as $url)  {
+            $this->forceSwiftypeIndex($url);
+        }
     }
 
     /**
@@ -53,7 +79,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
      *
      * @return bool
      */
-    protected function forceSwiftypeIndex(): bool
+    protected function forceSwiftypeIndex(string $updateUrl): bool
     {
         // We don't reindex dev environments.
         if (Director::isDev()) {
@@ -111,8 +137,6 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
 
             return false;
         }
-
-        $updateUrl = $this->getOwner()->getAbsoluteLiveLink(false);
 
         // Create curl resource.
         $ch = curl_init();
@@ -184,9 +208,48 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         return Injector::inst()->get(LoggerInterface::class);
     }
 
+
+    public function setUrlsToCrawl(array $urls) {
+        $this->urlsToCrawl = $urls;
+    }
+
+    public function getUrlsToCrawl(): array
+    {
+        return $this->urlsToCrawl;
+    }
+
+    private function getOwnerKey(): string
+    {
+        $owner = $this->getOwner();
+        $key = $owner->ClassName . $owner->ID;
+        return $key;
+    }
+
+    /**
+     * collate Urls to crawl
+     *
+     * @return void
+     */
+    public function collateUrls(): void
+    {
+        $urls = $this->getUrlsToCrawl();
+        $this->withVersionContext(function() use ($urls) {
+            /** @var SiteTree $owner */
+            $owner = $this->getOwner();
+            $key = $this->getOwnerKey();
+            $urls[$key] = [
+                $owner->AbsoluteLink(),
+            ];
+        });
+        $this->setUrlsToCrawl($urls);
+    }
+
     /**
      * Sets the version context to Live as that's what crawlers will (normally) see
-     * the main function is to suppress teh ?stage=Live querystring
+     *
+     * The main function is to suppress the ?stage=Live querystring. LeftAndMain will set the default
+     * reading mode to 'DRAFT' when initialising so to counter this we need to re-set the default
+     * reading mode back to LIVE
      *
      * @param callable $callback
      * @return void

@@ -9,7 +9,9 @@ env:
 matrix:
   include:
     - php: 7.1
-      env: DB=MYSQL PHPUNIT_COVERAGE_TEST=1
+      env: DB=MYSQL PHPUNIT_TEST=1 PHPUNIT_COVERAGE_TEST=1
+    - php: 7.3
+      env: DB=MYSQL PHPUNIT_TEST=1
 
 before_script:
   # Init PHP

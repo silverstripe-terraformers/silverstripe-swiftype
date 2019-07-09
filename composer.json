@@ -29,6 +29,7 @@
   },
   "autoload": {
     "psr-4": {
+      "Ichaber\\SSSwiftype\\Tests\\": "tests/php/",
       "Ichaber\\SSSwiftype\\": "src/"
     }
   },
@@ -36,5 +37,7 @@
     "installer-name": "silverstripe-swiftype",
     "screenshots": [
     ]
-  }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

@@ -33,9 +33,8 @@ There are a bunch of standard `SwiftypeMetaTag` classes. Each of these classes r
 
 Here are the standard classes, and which SiteTree field/method they represent:
 - SwiftypeMetaTagDescription (`MetaDescription` field)
-- SwiftypeMetaTagPublishedAt (`Created` field)
+- SwiftypeMetaTagPublishedAt (`LastEdited` field)
 - SwiftypeMetaTagTitle (`Title` field)
-- SwiftypeMetaTagUpdatedAt (`LastEdited` field)
 - SwiftypeMetaTagURL (`Link()` method)
 
 ### Templating

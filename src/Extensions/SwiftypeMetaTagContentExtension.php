@@ -26,7 +26,7 @@ class SwiftypeMetaTagContentExtension extends DataExtension
         $metaClasses = $this->owner->config()->get('swiftype_meta_tag_classes');
         $metaTags = [];
 
-        if (count($metaClasses) === 0) {
+        if (!is_array($metaClasses) || count($metaClasses) === 0) {
             return DBField::create_field('HTMLText', '');
         }
 

@@ -81,7 +81,6 @@ App\Page\MyPage:
     - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagDescription
     - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagPublishedAt
     - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagTitle
-    - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagUpdatedAt
     - Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagURL
 ```
 
@@ -96,7 +95,6 @@ class MyPage extends SiteTree
         SwiftypeMetaTagDescription::class,
         SwiftypeMetaTagPublishedAt::class,
         SwiftypeMetaTagTitle::class,
-        SwiftypeMetaTagUpdatedAt::class,
         SwiftypeMetaTagURL::class,
     ];
 }

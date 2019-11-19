@@ -7,6 +7,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Model\SiteTreeExtension;
+use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -49,9 +50,13 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
      */
     protected function forceSwiftypeIndex(): bool
     {
+        // We don't reindex dev environments.
+        if (Director::isDev()) {
+            return true;
+        }
+
         /** @var SiteConfig $config */
         $config = SiteConfig::current_site_config();
-        $logger = $this->getLogger();
 
         // Are you not using SwiftypeSiteConfigFieldsExtension? That's cool, just be sure to implement these as fields
         // or methods in some other manor so that they are available via relField.
@@ -60,15 +65,17 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         // to that variable, and return it here.
         $swiftypeEnabled = (bool) $config->relField('SwiftypeEnabled');
 
+        if (!$swiftypeEnabled) {
+            return true;
+        }
+
+        $logger = $this->getLogger();
+
         // If you have multiple Engines per site (maybe you use Fluent with a different Engine on each Locale), then
         // this provides some basic ability to have different credentials returned based on the application state.
         $engineSlug = $config->relField('SwiftypeEngineSlug');
         $domainID = $config->relField('SwiftypeDomainID');
         $apiKey = $config->relField('SwiftypeAPIKey');
-
-        if (!$swiftypeEnabled) {
-            return true;
-        }
 
         if (!$engineSlug) {
             $trace = debug_backtrace();

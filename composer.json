@@ -11,30 +11,36 @@
   "license": "BSD-3-Clause",
   "authors": [
     {
-      "name": "Chris Penny",
-      "email": "cpenny@silverstripe.com"
-    },
-    {
       "name": "Charlie Bergthaler",
       "email": "charlie@silverstripe.com"
+    },
+    {
+      "name": "Chris Penny",
+      "email": "cpenny@silverstripe.com"
     }
+
   ],
   "support": {
     "issues": "http://github.com/ichaber/silverstripe-swiftype/issues"
   },
   "require": {
     "php": "^7.1",
-    "silverstripe/cms": "^4",
-    "silverstripe/framework": "^4"
+    "silverstripe/vendor-plugin": "^1",
+    "silverstripe/framework": "^4",
+    "silverstripe/cms": "^4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.7"
   },
   "autoload": {
     "psr-4": {
-      "Ichaber\\SSSwiftype\\": "src/"
+      "Ichaber\\SSSwiftype\\": "src/",
+      "Ichaber\\SSSwiftype\\Tests\\": "tests/"
     }
   },
   "extra": {
-    "installer-name": "silverstripe-swiftype",
-    "screenshots": [
-    ]
-  }
+    "installer-name": "silverstripe-swiftype"
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev"
 }

@@ -6,7 +6,6 @@ use Exception;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagDescription;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagPublishedAt;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagTitle;
-use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagUpdatedAt;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagURL;
 use Ichaber\SSSwiftype\Tests\Fake\SwiftypeSiteTree;
 use SilverStripe\Core\Config\Config;
@@ -47,7 +46,6 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
                 SwiftypeMetaTagDescription::class,
                 SwiftypeMetaTagPublishedAt::class,
                 SwiftypeMetaTagTitle::class,
-                SwiftypeMetaTagUpdatedAt::class,
                 SwiftypeMetaTagURL::class,
             ]
         );

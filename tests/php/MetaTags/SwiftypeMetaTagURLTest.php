@@ -37,7 +37,8 @@ class SwiftypeMetaTagURLTest extends SapphireTest
     public function testMetaTagOutput(): void
     {
         Config::inst()->update(SwiftypeSiteTree::class, 'swiftype_meta_tag_classes', [SwiftypeMetaTagURL::class]);
-        Config::inst()->update(SwiftypeMetaTagURL::class, 'field_name', 'AbsoluteLink');
+        // Let's just change this field name to something completely different
+        Config::inst()->update(SwiftypeMetaTagURL::class, 'field_name', 'Title');
 
         /** @var SwiftypeSiteTree $page */
         $page = $this->objFromFixture(SwiftypeSiteTree::class, 'page1');
@@ -45,9 +46,13 @@ class SwiftypeMetaTagURLTest extends SapphireTest
         // Quickly render an expected mock
         $mock = file_get_contents(__DIR__ . '/../Mock/URLTagOutput.html');
         $mock = trim(preg_replace("/\s+/S", '', $mock));
+        $mock = str_replace('http://', '', $mock);
+        $mock = str_replace('https://', '', $mock);
 
         // Remove formatting from output output
         $output = trim(preg_replace("/\s+/S", '', $page->getSwiftypeMetaTags()->getValue()));
+        $output = str_replace('http://', '', $output);
+        $output = str_replace('https://', '', $output);
 
         $this->assertEquals($mock, $output);
     }

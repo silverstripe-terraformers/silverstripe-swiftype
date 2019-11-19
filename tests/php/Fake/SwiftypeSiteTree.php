@@ -3,6 +3,7 @@
 namespace Ichaber\SSSwiftype\Tests\Fake;
 
 use Ichaber\SSSwiftype\Extensions\SwiftypeMetaTagContentExtension;
+use Ichaber\SSSwiftype\Extensions\SwiftypeSiteTreeCrawlerExtension;
 use Ichaber\SSSwiftype\Tests\Extensions\SwiftypeMetaTagContentExtensionTest;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Dev\TestOnly;
@@ -12,6 +13,7 @@ use SilverStripe\Dev\TestOnly;
  *
  * @package Ichaber\SSSwiftype\Tests\Fake
  * @mixin SwiftypeMetaTagContentExtension
+ * @mixin SwiftypeSiteTreeCrawlerExtension
  */
 class SwiftypeSiteTree extends SiteTree implements TestOnly
 {
@@ -20,6 +22,7 @@ class SwiftypeSiteTree extends SiteTree implements TestOnly
      */
     private static $extensions = [
         SwiftypeMetaTagContentExtension::class,
+        SwiftypeSiteTreeCrawlerExtension::class,
     ];
 
     /**

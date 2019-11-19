@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Versioned\Versioned;
@@ -20,7 +21,6 @@ use SilverStripe\Versioned\Versioned;
  */
 class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
 {
-
     /**
      * Urls to crawl
      *
@@ -31,57 +31,217 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
     private $urlsToCrawl = [];
 
     /**
+     * @param array $urls
+     */
+    public function setUrlsToCrawl(array $urls) {
+        $this->urlsToCrawl = $urls;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUrlsToCrawl(): array
+    {
+        return $this->urlsToCrawl;
+    }
+
+    /**
+     * We need to collate Urls before we write, just in case an author has changed the Page's Url Segment. If they
+     * have, then we need to request Swiftype to reindex both the old Url (which should then be marked by Swiftype
+     * as a 404), and the new Url
+     */
+    public function onBeforeWrite(): void
+    {
+        $this->collateUrls();
+    }
+
+    /**
+     * After a publish has occurred, we can collate and process immediately (no need to split things out like during
+     * an unpublish)
+     *
      * @param SiteTree|mixed $original
      * @return void
      */
     public function onAfterPublish(&$original): void
     {
-        parent::onAfterPublish($original);
-
         $this->collateUrls();
-        $key = $this->getOwnerKey();
-        $urls = $this->getUrlsToCrawl();
-        foreach ($urls[$key] as $url)  {
-            $this->forceSwiftypeIndex($url);
+        $this->processCollatedUrls();
+
+        // Check to see if the clearing of cache has been disabled (useful for unit testing, or any other reason you
+        // might have to disable it)
+        $clearCacheDisabled = Config::inst()->get(static::class, 'clear_cache_disabled');
+
+        if ($clearCacheDisabled) {
+            return;
         }
+
+        // It's important that we clear the cache after we have finished requesting reindex from Swiftype
+        $this->clearCacheSingle();
     }
 
     /**
-     * @return void
+     * We need to collate the Urls to be purged *before* we complete the unpublish action (otherwise, the LIVE Urls
+     * will no longer be available, since the page is now unpublished)
      */
-    public function onBeforeUnpublish()
+    public function onBeforeUnpublish(): void
     {
-        parent::onBeforeUnpublish();
-
         $this->collateUrls();
     }
 
+    /**
+     * After the unpublish has completed, we can now request Swiftype to reindex the Urls that we collated
+     */
     public function onAfterUnpublish(): void
     {
-        parent::onAfterUnpublish();
+        $this->processCollatedUrls();
 
-        $key = $this->getOwnerKey();
+        // Check to see if the clearing of cache has been disabled (useful for unit testing, or any other reason you
+        // might have to disable it)
+        $clearCacheDisabled = Config::inst()->get(static::class, 'clear_cache_disabled');
+
+        if ($clearCacheDisabled) {
+            return;
+        }
+
+        // It's important that we clear the cache after we have finished requesting reindex from Swiftype
+        $this->clearCacheSingle();
+    }
+
+    /**
+     * You may need to clear the cache at some point during your particular process
+     *
+     * Reset all Urls for any/all objects that might be in the cache (keeping in mind that Extensions are singleton,
+     * so the UrlsToCache could be accessed via singleton and it could contain Urls for many owner objects)
+     *
+     * We don't use flushCache (which is called from DataObject) because this is called between write and un/publish,
+     * and we need our cache to persist through these states
+     */
+    public function clearCacheAll(): void
+    {
+        $this->setUrlsToCrawl([]);
+    }
+
+    /**
+     * You may need to clear the cache at some point during your particular process
+     *
+     * Reset only the Urls related to this particular owner object (keeping in mind that Extensions are singleton,
+     * so the UrlsToCache could be accessed via singleton and it could contain Urls for many owner objects)
+     *
+     * We don't use flushCache (which is called from DataObject) because this is called between write and un/publish,
+     * and we need our cache to persist through these states
+     */
+    public function clearCacheSingle(): void
+    {
         $urls = $this->getUrlsToCrawl();
+        $key = $this->getOwnerKey();
+
+        // Nothing for us to do here
+        if ($key === null) {
+            return;
+        }
+
+        // Nothing for us to do here
+        if (!array_key_exists($key, $urls)) {
+            return;
+        }
+
+        // Remove this key and it's Urls
+        unset($urls[$key]);
+
+        $this->setUrlsToCrawl($urls);
+    }
+
+    /**
+     * Collate Urls to crawl
+     *
+     * Extensions are singleton, so we use the owner key to make sure that we're only processing Urls directly related
+     * to the desired record.
+     *
+     * You might need to collate more than one URL per Page (maybe you're using Fluent or another translation module).
+     * This is the method you will want to override in order to add that additional logic.
+     */
+    public function collateUrls(): void
+    {
+        // Grab any existing Urls so that we can add to it
+        $urls = $this->getUrlsToCrawl();
+
+        // Set us to a LIVE stage/reading_mode
+        $this->withVersionContext(function() use (&$urls) {
+            /** @var SiteTree $owner */
+            $owner = $this->getOwner();
+            $key = $this->getOwnerKey();
+
+            // We can't do anything if we don't have a key to use
+            if ($key === null) {
+                return;
+            }
+
+            // Create a new container for this key
+            if (!array_key_exists($key, $urls)) {
+                $urls[$key] = [];
+            }
+
+            // Grab the absolute live link without ?stage=Live appended
+            $link = $owner->getAbsoluteLiveLink(false);
+
+            // If this record is not published, or we're unable to get a "Live Link" (for whatever reason), then there
+            // is nothing more we can do here
+            if (!$link) {
+                return;
+            }
+
+            // Nothing for us to do here, the Link is already being tracked
+            if (in_array($link, $urls[$key])) {
+                return;
+            }
+
+            // Add our base URL to this key
+            $urls[$key][] = $link;
+        });
+
+        // Update the Urls we have stored for indexing
+        $this->setUrlsToCrawl($urls);
+    }
+
+    /**
+     * Send requests to Swiftype to reindex each of the Urls that we have previously collated
+     */
+    protected function processCollatedUrls(): void
+    {
+        // Fetch the Urls that we need to reindex
+        $key = $this->getOwnerKey();
+
+        // We can't do anything if we don't have a key to process
+        if ($key === null) {
+            return;
+        }
+
+        $urls = $this->getUrlsToCrawl();
+
+        // There is nothing for us to do here if there are no Urls
+        if (count(array_keys($urls)) === 0) {
+            return;
+        }
+
+        // There are no Urls for this particular key
+        if (!array_key_exists($key, $urls)) {
+            return;
+        }
+
+        // Force the reindexing of each URL we collated
         foreach ($urls[$key] as $url)  {
             $this->forceSwiftypeIndex($url);
         }
     }
 
     /**
-     * According to the documentation of the RestfulService only xml output is supported at this stage.
-     * As we need json, we opted to just use standard PHP curl processing.
-     *
-     * For future proofing purposes, this function returns a boolean value.
-     *
-     * Note: This request to Swiftype is ignored any time a request is sent for an existing URL (unfortunately). For
-     * reindexing edited Pages, we must unfortunately rely on Constant Crawl. This is probably a design choice on
-     * Swiftype's part.
-     *
+     * @todo: Update to PSR-7
+     * @param string $updateUrl
      * @return bool
      */
     protected function forceSwiftypeIndex(string $updateUrl): bool
     {
-        // We don't reindex dev environments.
+        // We don't reindex dev environments
         if (Director::isDev()) {
             return true;
         }
@@ -90,10 +250,10 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         $config = SiteConfig::current_site_config();
 
         // Are you not using SwiftypeSiteConfigFieldsExtension? That's cool, just be sure to implement these as fields
-        // or methods in some other manor so that they are available via relField.
+        // or methods in some other manor so that they are available via relField
 
         // You might want to implement this via Environment variables or something. Just make sure SiteConfig has access
-        // to that variable, and return it here.
+        // to that variable, and return it here
         $swiftypeEnabled = (bool) $config->relField('SwiftypeEnabled');
 
         if (!$swiftypeEnabled) {
@@ -103,7 +263,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         $logger = $this->getLogger();
 
         // If you have multiple Engines per site (maybe you use Fluent with a different Engine on each Locale), then
-        // this provides some basic ability to have different credentials returned based on the application state.
+        // this provides some basic ability to have different credentials returned based on the application state
         $engineSlug = $config->relField('SwiftypeEngineSlug');
         $domainID = $config->relField('SwiftypeDomainID');
         $apiKey = $config->relField('SwiftypeAPIKey');
@@ -112,7 +272,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
             $trace = debug_backtrace();
             $logger->warning(
                 'Swiftype Engine Slug value has not been set. Settings > Swiftype Search > Swiftype Engine Slug',
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace.
+                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
             );
 
             return false;
@@ -122,7 +282,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
             $trace = debug_backtrace();
             $logger->warning(
                 'Swiftype Domain ID has not been set. Settings > Swiftype Search > Swiftype Domain ID',
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace.
+                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
             );
 
             return false;
@@ -132,16 +292,16 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
             $trace = debug_backtrace();
             $logger->warning(
                 'Swiftype API Key has not been set. Settings > Swiftype Search > Swiftype Production API Key',
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace.
+                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
             );
 
             return false;
         }
 
-        // Create curl resource.
+        // Create curl resource
         $ch = curl_init();
 
-        // Set url.
+        // Set url
         curl_setopt(
             $ch,
             CURLOPT_URL,
@@ -152,34 +312,34 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
             )
         );
 
-        // Set request method to "PUT".
+        // Set request method to "PUT"
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 
-        // Set headers.
+        // Set headers
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
         ]);
 
-        // Return the transfer as a string.
+        // Return the transfer as a string
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        // Set our PUT values.
+        // Set our PUT values
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
             'auth_token' => $apiKey,
             'url' => $updateUrl,
         ]));
 
-        // $output contains the output string.
+        // $output contains the output string
         $output = curl_exec($ch);
 
-        // Close curl resource to free up system resources.
+        // Close curl resource to free up system resources
         curl_close($ch);
 
         if (!$output) {
             $trace = debug_backtrace();
             $logger->warning(
                 'We got no response from Swiftype for reindexing page: ' . $updateUrl,
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace.
+                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
             );
 
             return false;
@@ -190,7 +350,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
             $message = $jsonOutput['error'];
             $context = ['exception' => new Exception($message)];
 
-            // Add context (for RaygunHandler) by using the last item on the stack trace.
+            // Add context (for RaygunHandler) by using the last item on the stack trace
             $logger->warning($message, $context);
 
             return false;
@@ -208,40 +368,21 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         return Injector::inst()->get(LoggerInterface::class);
     }
 
-
-    public function setUrlsToCrawl(array $urls) {
-        $this->urlsToCrawl = $urls;
-    }
-
-    public function getUrlsToCrawl(): array
-    {
-        return $this->urlsToCrawl;
-    }
-
-    private function getOwnerKey(): string
-    {
-        $owner = $this->getOwner();
-        $key = $owner->ClassName . $owner->ID;
-        return $key;
-    }
-
     /**
-     * collate Urls to crawl
-     *
-     * @return void
+     * @return string
      */
-    public function collateUrls(): void
+    protected function getOwnerKey(): ?string
     {
-        $urls = $this->getUrlsToCrawl();
-        $this->withVersionContext(function() use ($urls) {
-            /** @var SiteTree $owner */
-            $owner = $this->getOwner();
-            $key = $this->getOwnerKey();
-            $urls[$key] = [
-                $owner->AbsoluteLink(),
-            ];
-        });
-        $this->setUrlsToCrawl($urls);
+        $owner = $this->owner;
+
+        // Can't generate a key if the owner has not yet been written to the DB
+        if (!$owner->isInDB()) {
+            return null;
+        }
+
+        $key = str_replace('\\', '', $owner->ClassName . $owner->ID);
+
+        return $key;
     }
 
     /**
@@ -252,15 +393,29 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
      * reading mode back to LIVE
      *
      * @param callable $callback
-     * @return void
      */
-    private function withVersionContext(callable $callback) {
-        Versioned::withVersionedMode(function() use ($callback) {
-            $originalReadingMode = Versioned::get_default_reading_mode();
+    private function withVersionContext(callable $callback): void
+    {
+        Versioned::withVersionedMode(static function() use ($callback) {
+            // Grab our current stage and reading mode
+            $originalReadingMode = Versioned::get_reading_mode();
+            $originalStage = Versioned::get_stage();
+
+            // Set our stage and reading mode to LIVE
+            Versioned::set_reading_mode('Stage.' . Versioned::LIVE);
             Versioned::set_stage(Versioned::LIVE);
-            Versioned::set_default_reading_mode(Versioned::get_reading_mode());
+
+            // Process whatever callback was provided
             $callback();
-            Versioned::set_default_reading_mode($originalReadingMode);
+
+            // Set us back to the original stage and reading mode
+            if ($originalReadingMode) {
+                Versioned::set_default_reading_mode($originalReadingMode);
+            }
+
+            if ($originalStage) {
+                Versioned::set_stage($originalStage);
+            }
         });
     }
 }

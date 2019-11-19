@@ -38,6 +38,7 @@ class SwiftypeSiteConfigFieldsExtension extends DataExtension
     /**
      * Settings and CMS form fields for CMS the admin/settings area
      *
+     * @codeCoverageIgnore
      * @param FieldList $fields
      * @return void
      */

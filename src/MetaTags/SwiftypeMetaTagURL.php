@@ -15,9 +15,9 @@ class SwiftypeMetaTagURL extends SwiftypeMetaTag
     protected $name = 'url';
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $fieldName = 'AbsoluteLink';
+    protected $fieldName = 'Link';
 
     /**
      * @var string

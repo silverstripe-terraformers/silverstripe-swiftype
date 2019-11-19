@@ -19,7 +19,8 @@ use SilverStripe\ORM\DataObject;
 interface SwiftypeMetaTagInterface
 {
     /**
-     * @return null|string
+     * @param DataObject $dataObject
+     * @return string|null
      */
     public function getMetaTagString(DataObject $dataObject): ?string;
 }

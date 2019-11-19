@@ -17,7 +17,7 @@ class SwiftypeMetaTagPublishedAt extends SwiftypeMetaTag
     /**
      * @var string
      */
-    protected $fieldName = 'Created';
+    protected $fieldName = 'LastEdited';
 
     /**
      * @var string

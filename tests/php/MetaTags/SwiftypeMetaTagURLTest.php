@@ -12,7 +12,7 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 /**
  * Class SwiftypeMetaTagURLTest
  *
- * @package Ichaber\SSSwiftype\Tests\Extensions
+ * @package Ichaber\SSSwiftype\Tests\MetaTags
  */
 class SwiftypeMetaTagURLTest extends SapphireTest
 {

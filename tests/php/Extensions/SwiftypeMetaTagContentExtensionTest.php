@@ -5,6 +5,7 @@ namespace Ichaber\SSSwiftype\Tests\Extensions;
 use Exception;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagDescription;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagPublishedAt;
+use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagRobots;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagTitle;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagURL;
 use Ichaber\SSSwiftype\Tests\Fake\SwiftypeSiteTree;
@@ -46,6 +47,7 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
             [
                 SwiftypeMetaTagDescription::class,
                 SwiftypeMetaTagPublishedAt::class,
+                SwiftypeMetaTagRobots::class,
                 SwiftypeMetaTagTitle::class,
                 SwiftypeMetaTagURL::class,
             ]

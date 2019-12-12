@@ -35,6 +35,33 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 
     /**
      * @param DataObject $dataObject
+     * @return null|string
+     */
+    public function getMetaTagString(DataObject $dataObject): ?string
+    {
+        // Can't do anything if no tag name was specified
+        if ($this->name === null) {
+            return null;
+        }
+
+        // Can't do anything if no tag field type was specified
+        if ($this->fieldType === null) {
+            return null;
+        }
+
+        // Grab the value for this field (if we're able)
+        $fieldValue = $this->getFieldValue($dataObject);
+
+        // Can't do anything if there is no field value
+        if ($fieldValue === null) {
+            return null;
+        }
+
+        return $this->generateMetaTagsString($this->name, $this->fieldType, $fieldValue);
+    }
+
+    /**
+     * @param DataObject $dataObject
      * @return string|int|null
      */
     protected function getFieldValue(DataObject $dataObject)
@@ -98,32 +125,5 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
             $fieldType,
             $value
         );
-    }
-
-    /**
-     * @param DataObject $dataObject
-     * @return null|string
-     */
-    public function getMetaTagString(DataObject $dataObject): ?string
-    {
-        // Can't do anything if no tag name was specified
-        if ($this->name === null) {
-            return null;
-        }
-
-        // Can't do anything if no tag field type was specified
-        if ($this->fieldType === null) {
-            return null;
-        }
-
-        // Grab the value for this field (if we're able)
-        $fieldValue = $this->getFieldValue($dataObject);
-
-        // Can't do anything if there is no field value
-        if ($fieldValue === null) {
-            return null;
-        }
-
-        return $this->generateMetaTagsString($this->name, $this->fieldType, $fieldValue);
     }
 }

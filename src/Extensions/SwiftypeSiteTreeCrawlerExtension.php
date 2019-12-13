@@ -2,15 +2,11 @@
 
 namespace Ichaber\SSSwiftype\Extensions;
 
-use Exception;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\Log\LoggerInterface;
+use Ichaber\SSSwiftype\Service\SwiftypeCrawler;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -235,7 +231,6 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
     }
 
     /**
-     * @todo: Update to PSR-7
      * @param string $updateUrl
      * @return bool
      */
@@ -246,126 +241,9 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
             return true;
         }
 
-        /** @var SiteConfig $config */
-        $config = SiteConfig::current_site_config();
+        $crawler = SwiftypeCrawler::create();
 
-        // Are you not using SwiftypeSiteConfigFieldsExtension? That's cool, just be sure to implement these as fields
-        // or methods in some other manor so that they are available via relField
-
-        // You might want to implement this via Environment variables or something. Just make sure SiteConfig has access
-        // to that variable, and return it here
-        $swiftypeEnabled = (bool) $config->relField('SwiftypeEnabled');
-
-        if (!$swiftypeEnabled) {
-            return true;
-        }
-
-        $logger = $this->getLogger();
-
-        // If you have multiple Engines per site (maybe you use Fluent with a different Engine on each Locale), then
-        // this provides some basic ability to have different credentials returned based on the application state
-        $engineSlug = $config->relField('SwiftypeEngineSlug');
-        $domainID = $config->relField('SwiftypeDomainID');
-        $apiKey = $config->relField('SwiftypeAPIKey');
-
-        if (!$engineSlug) {
-            $trace = debug_backtrace();
-            $logger->warning(
-                'Swiftype Engine Slug value has not been set. Settings > Swiftype Search > Swiftype Engine Slug',
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
-            );
-
-            return false;
-        }
-
-        if (!$domainID) {
-            $trace = debug_backtrace();
-            $logger->warning(
-                'Swiftype Domain ID has not been set. Settings > Swiftype Search > Swiftype Domain ID',
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
-            );
-
-            return false;
-        }
-
-        if (!$apiKey) {
-            $trace = debug_backtrace();
-            $logger->warning(
-                'Swiftype API Key has not been set. Settings > Swiftype Search > Swiftype Production API Key',
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
-            );
-
-            return false;
-        }
-
-        // Create curl resource
-        $ch = curl_init();
-
-        // Set url
-        curl_setopt(
-            $ch,
-            CURLOPT_URL,
-            sprintf(
-                'https://api.swiftype.com/api/v1/engines/%s/domains/%s/crawl_url.json',
-                $engineSlug,
-                $domainID
-            )
-        );
-
-        // Set request method to "PUT"
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-
-        // Set headers
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-        ]);
-
-        // Return the transfer as a string
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // Set our PUT values
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            'auth_token' => $apiKey,
-            'url' => $updateUrl,
-        ]));
-
-        // $output contains the output string
-        $output = curl_exec($ch);
-
-        // Close curl resource to free up system resources
-        curl_close($ch);
-
-        if (!$output) {
-            $trace = debug_backtrace();
-            $logger->warning(
-                'We got no response from Swiftype for reindexing page: ' . $updateUrl,
-                array_shift($trace) // Add context (for RaygunHandler) by using the last item on the stack trace
-            );
-
-            return false;
-        }
-
-        $jsonOutput = json_decode($output, true);
-        if (!empty($jsonOutput) && array_key_exists('error', $jsonOutput)) {
-            $message = $jsonOutput['error'];
-            $context = ['exception' => new Exception($message)];
-
-            // Add context (for RaygunHandler) by using the last item on the stack trace
-            $logger->warning($message, $context);
-
-            return false;
-        }
-
-        return false;
-    }
-
-    /**
-     * @return LoggerInterface
-     * @throws NotFoundExceptionInterface
-     */
-    protected function getLogger(): LoggerInterface
-    {
-        return Injector::inst()->get(LoggerInterface::class);
+        return $crawler->send($updateUrl);
     }
 
     /**
@@ -398,10 +276,12 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
     {
         Versioned::withVersionedMode(static function() use ($callback) {
             // Grab our current stage and reading mode
+            $originalDefaultReadingMode = Versioned::get_default_reading_mode();
             $originalReadingMode = Versioned::get_reading_mode();
             $originalStage = Versioned::get_stage();
 
             // Set our stage and reading mode to LIVE
+            Versioned::set_default_reading_mode('Stage.' . Versioned::LIVE);
             Versioned::set_reading_mode('Stage.' . Versioned::LIVE);
             Versioned::set_stage(Versioned::LIVE);
 
@@ -410,7 +290,8 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
 
             // Set us back to the original stage and reading mode
             if ($originalReadingMode) {
-                Versioned::set_default_reading_mode($originalReadingMode);
+                Versioned::set_default_reading_mode($originalDefaultReadingMode);
+                Versioned::set_reading_mode($originalReadingMode);
             }
 
             if ($originalStage) {

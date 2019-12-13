@@ -1,0 +1,6 @@
+SilverStripe\SiteConfig\SiteConfig:
+  config:
+    SwiftypeEnabled: 1
+    SwiftypeEngineSlug: test
+    SwiftypeDomainID: test
+    SwiftypeAPIKey: test

@@ -17,7 +17,7 @@ the silverstripe space.
 Install with Composer:
 
 ```
-composer require ichabar/silverstripe-swiftype
+composer require ichaber/silverstripe-swiftype
 ```
 
 Also see [Configuration](#Configuration). Extensions and configurations are not applied automatically.

@@ -3,6 +3,7 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use Exception;
+use Ichaber\SSSwiftype\Traits\SwiftypeIndexCrawlerTrait;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use SilverStripe\CMS\Model\SiteTree;
@@ -18,6 +19,8 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
 {
+    use SwiftypeIndexCrawlerTrait;
+
     /**
      * @param SiteTree|mixed $original
      */
@@ -103,41 +106,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         $updateUrl = $this->getOwner()->getAbsoluteLiveLink();
 
         // Create curl resource.
-        $ch = curl_init();
-
-        // Set url.
-        curl_setopt(
-            $ch,
-            CURLOPT_URL,
-            sprintf(
-                'https://api.swiftype.com/api/v1/engines/%s/domains/%s/crawl_url.json',
-                $engineSlug,
-                $domainID
-            )
-        );
-
-        // Set request method to "PUT".
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-
-        // Set headers.
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-        ]);
-
-        // Return the transfer as a string.
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // Set our PUT values.
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            'auth_token' => $apiKey,
-            'url' => $updateUrl,
-        ]));
-
-        // $output contains the output string.
-        $output = curl_exec($ch);
-
-        // Close curl resource to free up system resources.
-        curl_close($ch);
+        $output = $this->buildCurlRequest($engineSlug, $domainID, $apiKey, $updateUrl);
 
         if (!$output) {
             $trace = debug_backtrace();

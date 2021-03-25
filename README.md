@@ -66,12 +66,19 @@ SilverStripe\CMS\Model\SiteTree:
   extensions:
     - Ichaber\SSSwiftype\Extensions\SwiftypeSiteTreeCrawlerExtension
     - Ichaber\SSSwiftype\Extensions\SwiftypeMetaTagContentExtension
+SilverStripe\Assets\File:
+  extensions:
+    - Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension
+Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension:
+  reindex_files_whitelist:
+    - pdf
 ```
 
 These will provide you with:
 - The standard CMS fields for adding your Swiftype credentials.
 - A template variable (`$SwiftypeMetaTags`) for outputting your meta tags.
 - Re-index requests to Swiftype on SiteTree publishing.
+- Re-index requests to Swiftype on File publishing (on specific file type(s) e.g. 'pdf').
 
 You will then need specify which Meta Tags you would like to use. You can do this in two ways.
 
@@ -121,6 +128,17 @@ SilverStripe\CMS\Model\SiteTree:
   extensions:
     - Ichaber\SSSwiftype\Extensions\SwiftypeSiteTreeCrawlerExtension
 ```
+
+if you are using the Swiftype Crawler, and would like to add "re-crawl" actions after your files publish, you can apply `SwiftypeFileCrawlerExtension` to `File`.
+```YML
+SilverStripe\Assets\File:
+  extensions:
+    - Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension
+Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension:
+  reindex_files_whitelist:
+    - pdf
+```
+> `reindex_files_whitelist` config parameter can be used to whitelist which file types you wish to re-crawl.
 
 If you would like SiteTree to have access to the standard template method, then apply the following extension.
 ```yml

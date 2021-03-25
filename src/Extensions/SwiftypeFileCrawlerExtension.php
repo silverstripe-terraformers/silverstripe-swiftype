@@ -3,11 +3,14 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use Exception;
+use Ichaber\SSSwiftype\Traits\SwiftypeIndexCrawlerTrait;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use SilverStripe\Assets\File;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\MimeValidator\MimeUploadValidator;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
@@ -18,19 +21,25 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class SwiftypeFileCrawlerExtension extends DataExtension
 {
+    use SwiftypeIndexCrawlerTrait;
+
     /**
-     * @param DataObject|mixed $original
+     * config setting to choose which files to be indexed.
+     *
+     * @var string[]
      */
-    public function onAfterPublish(&$original): void
+    private static $reindex_files_whitelist = [];
+
+    public function onAfterWrite(): void
     {
-        parent::onAfterPublish($original);
+        parent::onAfterWrite();
 
         $this->forceSwiftypeIndex();
     }
 
-    public function onAfterUnpublish(): void
+    public function onAfterDelete(): void
     {
-        parent::onAfterUnpublish();
+        parent::onAfterDelete();
 
         $this->forceSwiftypeIndex();
     }
@@ -49,6 +58,12 @@ class SwiftypeFileCrawlerExtension extends DataExtension
      */
     protected function forceSwiftypeIndex(): bool
     {
+        // only reindex file types we need.
+        $fileName = File::get_file_extension($this->getOwner()->Filename);
+        if (!in_array($fileName, $this->getOwner()->config()->get('reindex_files_whitelist'),true)) {
+            return false;
+        }
+
         /** @var SiteConfig $config */
         $config = SiteConfig::current_site_config();
         $logger = $this->getLogger();
@@ -103,41 +118,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
         $updateUrl = $this->getOwner()->getAbsoluteURL();
 
         // Create curl resource.
-        $ch = curl_init();
-
-        // Set url.
-        curl_setopt(
-            $ch,
-            CURLOPT_URL,
-            sprintf(
-                'https://api.swiftype.com/api/v1/engines/%s/domains/%s/crawl_url.json',
-                $engineSlug,
-                $domainID
-            )
-        );
-
-        // Set request method to "PUT".
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-
-        // Set headers.
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-        ]);
-
-        // Return the transfer as a string.
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // Set our PUT values.
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            'auth_token' => $apiKey,
-            'url' => $updateUrl,
-        ]));
-
-        // $output contains the output string.
-        $output = curl_exec($ch);
-
-        // Close curl resource to free up system resources.
-        curl_close($ch);
+        $output = $this->buildCurlRequest($engineSlug, $domainID, $apiKey, $updateUrl);
 
         if (!$output) {
             $trace = debug_backtrace();

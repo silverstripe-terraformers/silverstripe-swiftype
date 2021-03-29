@@ -28,7 +28,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
     private $urlsToCrawl = [];
 
     /**
-     * config setting to choose which files to be indexed.
+     * config setting to whitelist which files can be indexed.
      *
      * @var string[]
      */
@@ -185,7 +185,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
             }
 
             // Grab the absolute live link without ?stage=Live appended
-            $link = $owner->getAbsoluteLiveLink(false);
+            $link = $owner->getAbsolute(false);
 
             // If this record is not published, or we're unable to get a "Live Link" (for whatever reason), then there
             // is nothing more we can do here
@@ -248,10 +248,8 @@ class SwiftypeFileCrawlerExtension extends DataExtension
             return true;
         }
 
-        // only reindex file types we need.
-        $fileName = File::get_file_extension($this->getOwner()->Filename);
-        if (!in_array($fileName, $this->getOwner()->config()->get('reindex_files_whitelist'),true)) {
-            return true;
+        if (!$this->checkFileIsToBeReindexed()) {
+            return false;
         }
 
         $crawler = SwiftypeCrawler::create();
@@ -274,6 +272,23 @@ class SwiftypeFileCrawlerExtension extends DataExtension
         $key = str_replace('\\', '', $owner->ClassName . $owner->ID);
 
         return $key;
+    }
+
+    /**
+     * Method to check our file types whitelist since we don't want to index files that aren't required in the index
+     * e.g. image files.
+     *
+     * @return bool
+     */
+    protected function checkFileIsToBeReindexed(): bool
+    {
+        // only reindex file types we need.
+        $fileName = File::get_file_extension($this->getOwner()->Filename);
+        if (in_array($fileName, $this->getOwner()->config()->get('reindex_files_whitelist'),true)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

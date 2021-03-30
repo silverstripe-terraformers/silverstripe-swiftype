@@ -9,11 +9,11 @@ use SilverStripe\Assets\File;
 use SilverStripe\Dev\TestOnly;
 
 /**
- * Class SwiftypeSiteTree
+ * Class SwiftypeFile
  *
  * @package Ichaber\SSSwiftype\Tests\Fake
  * @mixin SwiftypeMetaTagContentExtension
- * @mixin SwiftypeSiteTreeCrawlerExtension
+ * @mixin SwiftypeFileCrawlerExtension
  */
 class SwiftypeFile extends File implements TestOnly
 {
@@ -24,6 +24,14 @@ class SwiftypeFile extends File implements TestOnly
         SwiftypeMetaTagContentExtension::class,
         SwiftypeFileCrawlerExtension::class,
     ];
+
+    /**
+     * config setting to whitelist which files can be indexed.
+     * Defaults to 'pdf' for our unit tests.
+     *
+     * @var string[]
+     */
+    private static $reindex_files_whitelist = ['pdf'];
 
     /**
      * This needs to be set in your test.

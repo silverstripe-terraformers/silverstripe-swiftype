@@ -3,6 +3,7 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use Ichaber\SSSwiftype\Service\SwiftypeCrawler;
+use Ichaber\SSSwiftype\Tests\Fake\SwiftypeFile;
 use SilverStripe\Assets\File;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\ORM\DataExtension;
@@ -11,10 +12,10 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Versioned\Versioned;
 
 /**
- * Class SwiftypeSiteTreeCrawlerExtension
+ * Class SwiftypeFileCrawlerExtension
  *
  * @package Ichaber\SSSwiftype\Extensions
- * @property SiteTree|$this $owner
+ * @property SwiftypeFile|$this $owner
  */
 class SwiftypeFileCrawlerExtension extends DataExtension
 {
@@ -26,13 +27,6 @@ class SwiftypeFileCrawlerExtension extends DataExtension
      * @var array
      */
     private $urlsToCrawl = [];
-
-    /**
-     * config setting to whitelist which files can be indexed.
-     *
-     * @var string[]
-     */
-    private static $reindex_files_whitelist = [];
 
     /**
      * @param array $urls
@@ -50,7 +44,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
     }
 
     /**
-     * We need to collate Urls before we write, just in case an author has changed the Page's Url Segment. If they
+     * We need to collate Urls before we write, just in case an author has changed the File's name (URL). If they
      * have, then we need to request Swiftype to reindex both the old Url (which should then be marked by Swiftype
      * as a 404), and the new Url
      */
@@ -65,7 +59,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
      *
      * @return void
      */
-    public function onAfterWrite(): void
+    public function onAfterPublish(): void
     {
         $this->collateUrls();
         $this->processCollatedUrls();
@@ -86,7 +80,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
      * We need to collate the Urls to be purged *before* we complete the unpublish action (otherwise, the LIVE Urls
      * will no longer be available, since the page is now unpublished)
      */
-    public function onBeforeDelete(): void
+    public function onBeforeUnpublish(): void
     {
         $this->collateUrls();
     }
@@ -94,7 +88,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
     /**
      * After the unpublish has completed, we can now request Swiftype to reindex the Urls that we collated
      */
-    public function onAfterDelete(): void
+    public function onAfterUnpublish(): void
     {
         $this->processCollatedUrls();
 
@@ -165,12 +159,16 @@ class SwiftypeFileCrawlerExtension extends DataExtension
      */
     public function collateUrls(): void
     {
+        if (!$this->checkFileIsToBeReindexed()) {
+            return;
+        }
+
         // Grab any existing Urls so that we can add to it
         $urls = $this->getUrlsToCrawl();
 
         // Set us to a LIVE stage/reading_mode
         $this->withVersionContext(function() use (&$urls) {
-            /** @var SiteTree $owner */
+            /** @var File $owner */
             $owner = $this->getOwner();
             $key = $this->getOwnerKey();
 
@@ -185,7 +183,7 @@ class SwiftypeFileCrawlerExtension extends DataExtension
             }
 
             // Grab the absolute live link without ?stage=Live appended
-            $link = $owner->getAbsolute(false);
+            $link = $owner->getAbsoluteURL();
 
             // If this record is not published, or we're unable to get a "Live Link" (for whatever reason), then there
             // is nothing more we can do here
@@ -248,10 +246,6 @@ class SwiftypeFileCrawlerExtension extends DataExtension
             return true;
         }
 
-        if (!$this->checkFileIsToBeReindexed()) {
-            return false;
-        }
-
         $crawler = SwiftypeCrawler::create();
 
         return $crawler->send($updateUrl);
@@ -280,15 +274,12 @@ class SwiftypeFileCrawlerExtension extends DataExtension
      *
      * @return bool
      */
-    protected function checkFileIsToBeReindexed(): bool
+    protected function checkFileIsToBeReindexed()
     {
         // only reindex file types we need.
-        $fileName = File::get_file_extension($this->getOwner()->Filename);
-        if (in_array($fileName, $this->getOwner()->config()->get('reindex_files_whitelist'),true)) {
-            return true;
-        }
+        $fileType = File::get_file_extension($this->getOwner()->Filename);
 
-        return false;
+        return in_array($fileType, $this->getOwner()->config()->get('reindex_files_whitelist'),true);
     }
 
     /**

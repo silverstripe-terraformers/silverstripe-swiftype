@@ -1,13 +1,9 @@
 Ichaber\SSSwiftype\Tests\Fake\SwiftypeFile:
-  file1:
-    Filename: assets/file1.pdf
-    Title: File 1
-  file2:
-    Filename: assets/file2.pdf
-    Title: File 2
-  file3:
-    Filename: assets/file3.pdf
-    Title: File 3
-  file4:
-    Filename: assets/file4.jpg
-    Title: File 4 (image)
+  file_pdf:
+    Name: dummy.pdf
+    FileFilename: dummy.pdf
+    Title: Dummy pdf
+  file_jpg:
+    Name: success-kid.jpg
+    FileFilename: success-kid.jpg
+    Title: Success kid jpg image

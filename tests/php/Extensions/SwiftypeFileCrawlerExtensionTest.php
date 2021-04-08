@@ -72,9 +72,6 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         // Publish single so that Urls to crawl is populated
         $file->publishSingle();
 
-        // Make sure we don't have any Cache set from the above publishing
-        $file->clearCacheAll();
-
         // Grab the Urls that we expect to have been collated
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
         $urlsToCrawl = $file->getUrlsToCrawl();
@@ -159,19 +156,9 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         // Publish single so that Urls to crawl is populated
         $file->publishSingle();
 
-        // Make sure we don't have any Cache set from the above publishing
-        $file->clearCacheAll();
-
-        // Make sure we don't have any Cache set from the above publishing
-        $this->assertEquals($urls, $file->getUrlsToCrawl());
-
         // Grab the Urls that we expect to have been collated
         $urlsToCrawl = $file->getUrlsToCrawl();
         $this->assertEquals($urls, $file->getUrlsToCrawl());
-
-        // Check that the key does not exist for our File
-        $key = str_replace('\\', '', $file->ClassName . $file->ID);
-        $this->assertArrayNotHasKey($key, $urlsToCrawl);
     }
 
     /**
@@ -292,9 +279,6 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
 
         // Publish single so that Urls to crawl is populated
         $file->publishSingle();
-
-        // Make sure we don't have any Cache set from the above publishing
-        $file->clearCacheAll();
 
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
 

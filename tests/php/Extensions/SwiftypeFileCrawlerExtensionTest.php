@@ -72,6 +72,9 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         // Publish single so that Urls to crawl is populated
         $file->publishSingle();
 
+        // Make sure we don't have any Cache set from the above publishing
+        $file->clearCacheAll();
+
         // Grab the Urls that we expect to have been collated
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
         $urlsToCrawl = $file->getUrlsToCrawl();
@@ -111,7 +114,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         $file->publishSingle();
 
         // Make sure we don't have any Cache set from the above publishing
-        $file->flushCache();
+        $file->clearCacheAll();
 
         // now we call the service to remove this file from index
         $file->doUnpublish();
@@ -138,6 +141,8 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     }
 
     /**
+     * Files that hold no text (e.g. images) should not be indexed
+     *
      * @throws Exception
      */
     public function testUrlsNotToCrawlPublished(): void
@@ -154,9 +159,15 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         // Publish single so that Urls to crawl is populated
         $file->publishSingle();
 
+        // Make sure we don't have any Cache set from the above publishing
+        $file->clearCacheAll();
+
+        // Make sure we don't have any Cache set from the above publishing
+        $this->assertEquals($urls, $file->getUrlsToCrawl());
+
         // Grab the Urls that we expect to have been collated
         $urlsToCrawl = $file->getUrlsToCrawl();
-        $this->assertEquals($urlsToCrawl, $file->getUrlsToCrawl());
+        $this->assertEquals($urls, $file->getUrlsToCrawl());
 
         // Check that the key does not exist for our File
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
@@ -164,6 +175,8 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     }
 
     /**
+     * Files that hold no text (e.g. images) should not be indexed
+     *
      * @throws Exception
      */
     public function testUrlsNotToCrawlUnpublished(): void
@@ -181,7 +194,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         $file->publishSingle();
 
         // Make sure we don't have any Cache set from the above publishing
-        $file->flushCache();
+        $file->clearCacheAll();
 
         // now we call the service to remove this file from index
         $file->doUnpublish();
@@ -215,7 +228,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
 
         // Make sure our cache is flushed from the above publishing
-        $file->flushCache();
+        $file->clearCacheAll();
 
         /**
          * Note:
@@ -279,6 +292,10 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
 
         // Publish single so that Urls to crawl is populated
         $file->publishSingle();
+
+        // Make sure we don't have any Cache set from the above publishing
+        $file->clearCacheAll();
+
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
 
         // Grab the Urls that we expect to have been collated

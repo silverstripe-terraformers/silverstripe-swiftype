@@ -2,11 +2,6 @@
 
 namespace Ichaber\SSSwiftype\MetaTags;
 
-/**
- * Class SwiftypeMetaTagDescription
- *
- * @package Ichaber\SSSwiftype\MetaTags
- */
 class SwiftypeMetaTagDescription extends SwiftypeMetaTag
 {
     /**

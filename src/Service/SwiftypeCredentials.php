@@ -10,10 +10,6 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * Credit: [Bernard Hamlin](https://github.com/blueo) and [Mojmir Fendek](https://github.com/mfendeksilverstripe)
- *
- * Class SwiftypeCredentials
- *
- * @package Ichaber\SSSwiftype\Service
  */
 class SwiftypeCredentials
 {
@@ -50,81 +46,51 @@ class SwiftypeCredentials
      */
     private $message;
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool|null $enabled
-     */
     public function setEnabled(?bool $enabled): void
     {
         $this->enabled = (bool) $enabled;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEngineSlug(): ?string
     {
         return $this->engineSlug;
     }
 
-    /**
-     * @param string|null $engineSlug
-     */
     public function setEngineSlug(?string $engineSlug): void
     {
         $this->engineSlug = $engineSlug;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDomainID(): ?string
     {
         return $this->domainID;
     }
 
-    /**
-     * @param string|null $domainID
-     */
     public function setDomainID(?string $domainID): void
     {
         $this->domainID = $domainID;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAPIKey(): ?string
     {
         return $this->apiKey;
     }
 
-    /**
-     * @param string|null $apiKey
-     */
     public function setAPIKey(?string $apiKey): void
     {
         $this->apiKey = $apiKey;
     }
 
-    /**
-     * @return string|null
-     */
     public function getMessage(): ?string
     {
         return $this->message;
     }
 
-    /**
-     * @param string $message
-     */
     public function setMessage(string $message): void
     {
         $this->message = $message;
@@ -134,7 +100,6 @@ class SwiftypeCredentials
      * Gets the Swiftype credentials
      *
      * @param mixed|null $additionalData If set, we assume that you want to populate your Credentials through extension
-     * @return void
      */
     public function __construct($additionalData = null)
     {
@@ -191,9 +156,6 @@ class SwiftypeCredentials
         }
     }
 
-    /**
-     * @param string $message
-     */
     protected function disable(string $message): void
     {
         $trace = debug_backtrace();
@@ -205,9 +167,6 @@ class SwiftypeCredentials
         $this->setEnabled(false);
     }
 
-    /**
-     * @return LoggerInterface
-     */
     protected function getLogger(): LoggerInterface
     {
         if (!$this->logger) {

@@ -67,7 +67,7 @@ class SwiftypeCredentialsTest extends SapphireTest
         $credentials = SwiftypeCredentials::create();
 
         $this->assertFalse($credentials->isEnabled());
-        $this->assertContains('Swiftype Engine Slug value has not been set', $credentials->getMessage());
+        $this->assertStringContainsString('Swiftype Engine Slug value has not been set', $credentials->getMessage());
     }
 
     /**
@@ -88,7 +88,7 @@ class SwiftypeCredentialsTest extends SapphireTest
         $credentials = SwiftypeCredentials::create();
 
         $this->assertFalse($credentials->isEnabled());
-        $this->assertContains('Swiftype Domain ID has not been set', $credentials->getMessage());
+        $this->assertStringContainsString('Swiftype Domain ID has not been set', $credentials->getMessage());
     }
 
     /**
@@ -109,6 +109,6 @@ class SwiftypeCredentialsTest extends SapphireTest
         $credentials = SwiftypeCredentials::create();
 
         $this->assertFalse($credentials->isEnabled());
-        $this->assertContains('Swiftype API Key has not been set', $credentials->getMessage());
+        $this->assertStringContainsString('Swiftype API Key has not been set', $credentials->getMessage());
     }
 }

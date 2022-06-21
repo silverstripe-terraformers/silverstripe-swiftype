@@ -10,10 +10,6 @@ use Throwable;
 
 /**
  * Credit: [Bernard Hamlin](https://github.com/blueo) and [Mojmir Fendek](https://github.com/mfendeksilverstripe)
- *
- * Class SwiftypeCrawler
- *
- * @package Ichaber\SSSwiftype\Service
  */
 class SwiftypeCrawler
 {
@@ -36,11 +32,6 @@ class SwiftypeCrawler
      */
     private $messages = [];
 
-    /**
-     * Crawler constructor.
-     *
-     * @param Client|null $client
-     */
     public function __construct(?Client $client = null)
     {
         if ($client === null) {
@@ -53,13 +44,12 @@ class SwiftypeCrawler
     /**
      * Crawls a page based on the locale
      *
-     * @param string $url
      * @param mixed|null $additionalData If set, we assume that you want to populate your Credentials through extension
-     * @return bool
      */
     public function send(string $url, $additionalData = null): bool
     {
         $credentials = SwiftypeCredentials::create($additionalData);
+
         if (!$credentials->isEnabled()) {
             $this->addMessage($credentials->getMessage());
             $this->getLogger()->alert($credentials->getMessage());
@@ -114,6 +104,7 @@ class SwiftypeCrawler
 
         // invalid response data
         $data = json_decode($contents, true);
+
         if ($data && array_key_exists('error', $data)) {
             $message = sprintf(
                 "Swiftype Crawl request failed - invalid response data \n%s\n%s\n%s",
@@ -131,17 +122,11 @@ class SwiftypeCrawler
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getMessages(): array
     {
         return $this->messages;
     }
 
-    /**
-     * @return LoggerInterface
-     */
     protected function getLogger(): LoggerInterface
     {
         if (!$this->logger) {
@@ -151,9 +136,6 @@ class SwiftypeCrawler
         return $this->logger;
     }
 
-    /**
-     * @param string $message
-     */
     protected function addMessage(string $message): void
     {
         $this->messages[] = $message;

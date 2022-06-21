@@ -6,17 +6,8 @@ use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataObject;
 
-/**
- * Class SwiftypeMetaTagRobots
- *
- * @package Ichaber\SSSwiftype\MetaTags
- */
 class SwiftypeMetaTagRobots extends SwiftypeMetaTag
 {
-    /**
-     * @param DataObject $dataObject
-     * @return string|null
-     */
     public function getMetaTagString(DataObject $dataObject): ?string
     {
         $value = $this->getFieldValue($dataObject);
@@ -29,7 +20,6 @@ class SwiftypeMetaTagRobots extends SwiftypeMetaTag
     }
 
     /**
-     * @param DataObject $dataObject
      * @return int|string|null
      */
     protected function getFieldValue(DataObject $dataObject)

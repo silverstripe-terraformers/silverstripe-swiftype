@@ -11,16 +11,8 @@ use SilverStripe\ORM\DataObject;
  * and I would just get php errors any time I tried to instantiate a MetaTag class.
  *
  * Moving them into the same namespace was the only way I was able to move forward without going down a rabbit hole.
- *
- * Interface SwiftypeMetaTagInterface
- *
- * @package Ichaber\SSSwiftype\Interfaces
  */
 interface SwiftypeMetaTagInterface
 {
-    /**
-     * @param DataObject $dataObject
-     * @return string|null
-     */
     public function getMetaTagString(DataObject $dataObject): ?string;
 }

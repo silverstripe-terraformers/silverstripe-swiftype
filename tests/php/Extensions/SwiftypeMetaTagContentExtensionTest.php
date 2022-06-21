@@ -69,7 +69,7 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
     /**
      * @throws Exception
      */
-    public function testMetaTagsReturnsEmptyByDefault()
+    public function testMetaTagsReturnsEmptyByDefault(): void
     {
         $page = new SwiftypeSiteTree();
         /** @var DBHTMLText $tags */
@@ -80,7 +80,7 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
     /**
      * @throws Exception
      */
-    public function testMetaTagsReturnsConfiguredTags()
+    public function testMetaTagsReturnsConfiguredTags(): void
     {
         $page = new SwiftypeSiteTree();
         $page->MetaDescription = 'My description';
@@ -91,6 +91,6 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
         /** @var DBHTMLText $tags */
         $tags = $page->getSwiftypeMetaTags();
         $this->assertNotEmpty($tags->getValue());
-        $this->assertContains($page->MetaDescription, $tags->getValue());
+        $this->assertStringContainsString($page->MetaDescription, $tags->getValue());
     }
 }

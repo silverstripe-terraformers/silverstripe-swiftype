@@ -10,9 +10,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Versioned\Versioned;
 
 /**
- * Class SwiftypeSiteTreeCrawlerExtension
- *
- * @package Ichaber\SSSwiftype\Extensions
  * @property SiteTree|$this $owner
  */
 class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
@@ -26,16 +23,11 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
      */
     private $urlsToCrawl = [];
 
-    /**
-     * @param array $urls
-     */
-    public function setUrlsToCrawl(array $urls) {
+    public function setUrlsToCrawl(array $urls)
+    {
         $this->urlsToCrawl = $urls;
     }
 
-    /**
-     * @return array
-     */
     public function getUrlsToCrawl(): array
     {
         return $this->urlsToCrawl;
@@ -56,7 +48,6 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
      * an unpublish)
      *
      * @param SiteTree|mixed $original
-     * @return void
      */
     public function onAfterPublish(&$original): void
     {
@@ -162,7 +153,7 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         $urls = $this->getUrlsToCrawl();
 
         // Set us to a LIVE stage/reading_mode
-        $this->withVersionContext(function() use (&$urls) {
+        $this->withVersionContext(function () use (&$urls) {
             /** @var SiteTree $owner */
             $owner = $this->getOwner();
             $key = $this->getOwnerKey();
@@ -225,15 +216,11 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         }
 
         // Force the reindexing of each URL we collated
-        foreach ($urls[$key] as $url)  {
+        foreach ($urls[$key] as $url) {
             $this->forceSwiftypeIndex($url);
         }
     }
 
-    /**
-     * @param string $updateUrl
-     * @return bool
-     */
     protected function forceSwiftypeIndex(string $updateUrl): bool
     {
         // We don't reindex dev environments
@@ -246,9 +233,6 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
         return $crawler->send($updateUrl);
     }
 
-    /**
-     * @return string
-     */
     protected function getOwnerKey(): ?string
     {
         $owner = $this->owner;
@@ -269,12 +253,10 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
      * The main function is to suppress the ?stage=Live querystring. LeftAndMain will set the default
      * reading mode to 'DRAFT' when initialising so to counter this we need to re-set the default
      * reading mode back to LIVE
-     *
-     * @param callable $callback
      */
     private function withVersionContext(callable $callback): void
     {
-        Versioned::withVersionedMode(static function() use ($callback) {
+        Versioned::withVersionedMode(static function () use ($callback) {
             // Grab our current stage and reading mode
             $originalDefaultReadingMode = Versioned::get_default_reading_mode();
             $originalReadingMode = Versioned::get_reading_mode();

@@ -9,9 +9,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 
 /**
- * Class SwiftypeMetaTagContentExtension
- *
- * @package Ichaber\SSSwiftype\Extensions
  * @property DataObject|$this $owner
  */
 class SwiftypeMetaTagContentExtension extends DataExtension

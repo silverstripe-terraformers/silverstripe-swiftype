@@ -8,9 +8,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
 /**
- * Class SwiftypeMetaTag
- *
- * @package Ichaber\SSSwiftype\MetaTags
  * @see _config/model.yml for DateFormat definition
  * @see _config/model.yml for field_name override example
  */
@@ -33,10 +30,6 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
      */
     protected $fieldType;
 
-    /**
-     * @param DataObject $dataObject
-     * @return null|string
-     */
     public function getMetaTagString(DataObject $dataObject): ?string
     {
         // Can't do anything if no tag name was specified
@@ -61,7 +54,6 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
     }
 
     /**
-     * @param DataObject $dataObject
      * @return string|int|null
      */
     protected function getFieldValue(DataObject $dataObject)
@@ -111,12 +103,6 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
         return null;
     }
 
-    /**
-     * @param string $name
-     * @param string $fieldType
-     * @param string $value
-     * @return string
-     */
     protected function generateMetaTagsString(string $name, string $fieldType, string $value): string
     {
         return sprintf(

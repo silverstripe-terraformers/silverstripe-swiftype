@@ -7,11 +7,6 @@ use Ichaber\SSSwiftype\Tests\Fake\SwiftypeSiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
-/**
- * Class SwiftypeMetaTagRobotsTest
- *
- * @package Ichaber\SSSwiftype\Tests\MetaTags
- */
 class SwiftypeMetaTagRobotsTest extends SapphireTest
 {
     /**
@@ -21,7 +16,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
 
     public function testRobotsTagNoIndex(): void
     {
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTree::class,
             'swiftype_meta_tag_classes',
             [
@@ -29,13 +24,13 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
             ]
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_index',
             true
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_follow',
             false
@@ -48,7 +43,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
         $mock = '<meta name="robots" content="noindex">';
         $mock = trim(preg_replace("/\s+/S", '', $mock));
 
-        // Remove formatting from output output
+        // Remove formatting from output
         $output = trim(preg_replace("/\s+/S", '', $page->getSwiftypeMetaTags()->getValue()));
 
         $this->assertEquals($mock, $output);
@@ -56,7 +51,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
 
     public function testRobotsTagNoFollow(): void
     {
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTree::class,
             'swiftype_meta_tag_classes',
             [
@@ -64,13 +59,13 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
             ]
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_index',
             false
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_follow',
             true
@@ -83,7 +78,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
         $mock = '<meta name="robots" content="nofollow">';
         $mock = trim(preg_replace("/\s+/S", '', $mock));
 
-        // Remove formatting from output output
+        // Remove formatting from output
         $output = trim(preg_replace("/\s+/S", '', $page->getSwiftypeMetaTags()->getValue()));
 
         $this->assertEquals($mock, $output);
@@ -91,7 +86,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
 
     public function testRobotsTagBoth(): void
     {
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTree::class,
             'swiftype_meta_tag_classes',
             [
@@ -99,13 +94,13 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
             ]
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_index',
             true
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_follow',
             true
@@ -118,7 +113,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
         $mock = '<meta name="robots" content="noindex, nofollow">';
         $mock = trim(preg_replace("/\s+/S", '', $mock));
 
-        // Remove formatting from output output
+        // Remove formatting from output
         $output = trim(preg_replace("/\s+/S", '', $page->getSwiftypeMetaTags()->getValue()));
 
         $this->assertEquals($mock, $output);
@@ -126,7 +121,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
 
     public function testRobotsTagNone(): void
     {
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTree::class,
             'swiftype_meta_tag_classes',
             [
@@ -134,13 +129,13 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
             ]
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_index',
             false
         );
 
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeMetaTagRobots::class,
             'no_follow',
             false
@@ -149,7 +144,7 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
         /** @var SwiftypeSiteTree $page */
         $page = $this->objFromFixture(SwiftypeSiteTree::class, 'page2');
 
-        // Remove formatting from output output
+        // Remove formatting from output
         $output = trim(preg_replace("/\s+/S", '', $page->getSwiftypeMetaTags()->getValue()));
 
         $this->assertEquals('', $output);

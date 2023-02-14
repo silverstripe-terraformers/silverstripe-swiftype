@@ -13,11 +13,6 @@ use SilverStripe\Dev\SapphireTest;
 use GuzzleHttp\Psr7\Response;
 use SilverStripe\SiteConfig\SiteConfig;
 
-/**
- * Class SwiftypeCrawlerTest
- *
- * @package Ichaber\SSSwiftype\Tests\Service
- */
 class SwiftypeCrawlerTest extends SapphireTest
 {
     /**

@@ -8,11 +8,6 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\SiteConfig\SiteConfig;
 
-/**
- * Class SwiftypeCredentialsTest
- *
- * @package Ichaber\SSSwiftype\Tests\Service
- */
 class SwiftypeCredentialsTest extends SapphireTest
 {
     /**

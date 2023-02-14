@@ -14,11 +14,6 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 
-/**
- * Class SwiftypeMetaTagContentExtensionTest
- *
- * @package Ichaber\SSSwiftype\Tests\Extensions
- */
 class SwiftypeMetaTagContentExtensionTest extends SapphireTest
 {
     /**
@@ -41,7 +36,7 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
      */
     public function testMetaTagOutput(): void
     {
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTree::class,
             'swiftype_meta_tag_classes',
             [
@@ -60,7 +55,7 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
         $mock = file_get_contents(__DIR__ . '/../Mock/TagsOutput.html');
         $mock = trim(preg_replace("/\s+/S", '', $mock));
 
-        // Remove formatting from output output
+        // Remove formatting from output
         $output = trim(preg_replace("/\s+/S", '', $page->getSwiftypeMetaTags()->getValue()));
 
         $this->assertEquals($mock, $output);
@@ -84,7 +79,7 @@ class SwiftypeMetaTagContentExtensionTest extends SapphireTest
     {
         $page = new SwiftypeSiteTree();
         $page->MetaDescription = 'My description';
-        $page->config()->update('swiftype_meta_tag_classes', [
+        $page->config()->set('swiftype_meta_tag_classes', [
             SwiftypeMetaTagDescription::class
         ]);
 

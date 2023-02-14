@@ -4,18 +4,9 @@ namespace Ichaber\SSSwiftype\MetaTags;
 
 class SwiftypeMetaTagURL extends SwiftypeMetaTag
 {
-    /**
-     * @var string
-     */
-    protected $name = 'url';
+    protected ?string $name = 'url';
 
-    /**
-     * @var string|null
-     */
-    protected $fieldName = 'Link';
+    protected ?string $fieldName = 'Link';
 
-    /**
-     * @var string
-     */
-    protected $fieldType = 'enum';
+    protected ?string $fieldType = 'enum';
 }

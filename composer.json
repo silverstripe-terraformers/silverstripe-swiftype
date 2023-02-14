@@ -16,22 +16,19 @@
         },
         {
             "name": "Chris Penny",
-            "email": "cpenny@silverstripe.com"
+            "email": "chris.penny@gmail.com"
         }
     ],
     "support": {
         "issues": "http://github.com/ichaber/silverstripe-swiftype/issues"
     },
     "require": {
-        "php": "^7.4 || ^8.0",
-        "silverstripe/vendor-plugin": "^1.6",
-        "silverstripe/framework": "^4",
-        "silverstripe/cms": "^4",
-        "guzzlehttp/guzzle": "^7",
-        "guzzlehttp/psr7": "^2"
+        "php": "^8.1",
+        "silverstripe/cms": "^5",
+        "guzzlehttp/guzzle": "^7.5"
     },
     "require-dev": {
-        "silverstripe/recipe-testing": "^2"
+        "silverstripe/recipe-testing": "^3"
     },
     "autoload": {
         "psr-4": {

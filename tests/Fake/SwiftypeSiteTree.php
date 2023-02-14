@@ -9,9 +9,6 @@ use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Dev\TestOnly;
 
 /**
- * Class SwiftypeSiteTree
- *
- * @package Ichaber\SSSwiftype\Tests\Fake
  * @mixin SwiftypeMetaTagContentExtension
  * @mixin SwiftypeSiteTreeCrawlerExtension
  */

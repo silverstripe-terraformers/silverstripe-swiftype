@@ -15,20 +15,11 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
 {
     use Configurable;
 
-    /**
-     * @var string|null
-     */
-    protected $name;
+    protected ?string $name;
 
-    /**
-     * @var string|null
-     */
-    protected $fieldName;
+    protected ?string $fieldName;
 
-    /**
-     * @var string|null
-     */
-    protected $fieldType;
+    protected ?string $fieldType;
 
     public function getMetaTagString(DataObject $dataObject): ?string
     {

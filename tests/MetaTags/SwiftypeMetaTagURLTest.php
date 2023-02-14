@@ -9,11 +9,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
-/**
- * Class SwiftypeMetaTagURLTest
- *
- * @package Ichaber\SSSwiftype\Tests\MetaTags
- */
 class SwiftypeMetaTagURLTest extends SapphireTest
 {
     /**
@@ -36,9 +31,15 @@ class SwiftypeMetaTagURLTest extends SapphireTest
      */
     public function testMetaTagOutput(): void
     {
-        Config::inst()->update(SwiftypeSiteTree::class, 'swiftype_meta_tag_classes', [SwiftypeMetaTagURL::class]);
+        Config::modify()->set(
+            SwiftypeSiteTree::class,
+            'swiftype_meta_tag_classes',
+            [
+                SwiftypeMetaTagURL::class,
+            ]
+        );
         // Let's just change this field name to something completely different
-        Config::inst()->update(SwiftypeMetaTagURL::class, 'field_name', 'Title');
+        Config::modify()->set(SwiftypeMetaTagURL::class, 'field_name', 'Title');
 
         /** @var SwiftypeSiteTree $page */
         $page = $this->objFromFixture(SwiftypeSiteTree::class, 'page1');
@@ -49,7 +50,7 @@ class SwiftypeMetaTagURLTest extends SapphireTest
         $mock = str_replace('http://', '', $mock);
         $mock = str_replace('https://', '', $mock);
 
-        // Remove formatting from output output
+        // Remove formatting from output
         $output = trim(preg_replace("/\s+/S", '', $page->getSwiftypeMetaTags()->getValue()));
         $output = str_replace('http://', '', $output);
         $output = str_replace('https://', '', $output);

@@ -20,10 +20,7 @@ use SilverStripe\ORM\DataExtension;
  */
 class SwiftypeSiteConfigFieldsExtension extends DataExtension
 {
-    /**
-     * @var array $db
-     */
-    private static $db = [
+    private static array $db = [
         'SwiftypeEnabled' => 'Boolean',
         'SwiftypeAccessKey' => 'Varchar(255)',
         'SwiftypeAPIKey' => 'Varchar(255)',

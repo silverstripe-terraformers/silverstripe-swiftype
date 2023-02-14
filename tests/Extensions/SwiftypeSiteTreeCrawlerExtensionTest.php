@@ -9,11 +9,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 
-/**
- * Class SwiftypeMetaTagContentExtensionTest
- *
- * @package Ichaber\SSSwiftype\Tests\Extensions
- */
 class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
 {
     /**
@@ -37,7 +32,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
     public function testUrlsToCrawlPublished(): void
     {
         // Set our config to not clear caches after un/publish, so that we can easily fetch the Urls for our test
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTreeCrawlerExtension::class,
             'clear_cache_disabled',
             true
@@ -51,7 +46,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
         $key = str_replace('\\', '', $page->ClassName . $page->ID);
 
         $expectedUrls = [
-            'localhost/page1/',
+            'localhost/page1',
         ];
         $urls = [];
 
@@ -81,7 +76,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
     public function testUrlsToCrawlUnpublished(): void
     {
         // Set our config to not clear caches after un/publish, so that we can easily fetch the Urls for our test
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTreeCrawlerExtension::class,
             'clear_cache_disabled',
             true
@@ -100,7 +95,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
         $page->doUnpublish();
 
         $expectedUrls = [
-            'localhost/page2/',
+            'localhost/page2',
         ];
         $urls = [];
 
@@ -130,7 +125,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
     public function testUrlsToCrawlSegmentChanged(): void
     {
         // Set our config to not clear caches after un/publish, so that we can easily fetch the Urls for our test
-        Config::inst()->update(
+        Config::modify()->set(
             SwiftypeSiteTreeCrawlerExtension::class,
             'clear_cache_disabled',
             true
@@ -153,8 +148,8 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
 
         // We expect two Urls now. One from before the segment change, and one from after it
         $expectedUrls = [
-            'localhost/page3/',
-            'localhost/page3changed/',
+            'localhost/page3',
+            'localhost/page3changed',
         ];
         $urls = [];
 

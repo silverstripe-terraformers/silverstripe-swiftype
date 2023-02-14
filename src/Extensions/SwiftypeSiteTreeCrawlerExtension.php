@@ -18,10 +18,8 @@ class SwiftypeSiteTreeCrawlerExtension extends SiteTreeExtension
      * Urls to crawl
      *
      * array keyed by getOwnerKey
-     *
-     * @var array
      */
-    private $urlsToCrawl = [];
+    private array $urlsToCrawl = [];
 
     public function setUrlsToCrawl(array $urls)
     {

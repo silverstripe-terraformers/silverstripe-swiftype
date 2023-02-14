@@ -4,18 +4,9 @@ namespace Ichaber\SSSwiftype\MetaTags;
 
 class SwiftypeMetaTagDescription extends SwiftypeMetaTag
 {
-    /**
-     * @var string
-     */
-    protected $name = 'description';
+    protected ?string $name = 'description';
 
-    /**
-     * @var string
-     */
-    protected $fieldName = 'MetaDescription';
+    protected ?string $fieldName = 'MetaDescription';
 
-    /**
-     * @var string
-     */
-    protected $fieldType = 'text';
+    protected ?string $fieldType = 'text';
 }

@@ -4,18 +4,9 @@ namespace Ichaber\SSSwiftype\MetaTags;
 
 class SwiftypeMetaTagPublishedAt extends SwiftypeMetaTag
 {
-    /**
-     * @var string
-     */
-    protected $name = 'published_at';
+    protected ?string $name = 'published_at';
 
-    /**
-     * @var string
-     */
-    protected $fieldName = 'LastEdited';
+    protected ?string $fieldName = 'LastEdited';
 
-    /**
-     * @var string
-     */
-    protected $fieldType = 'date';
+    protected ?string $fieldType = 'date';
 }

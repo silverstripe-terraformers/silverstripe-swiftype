@@ -4,14 +4,11 @@ namespace Ichaber\SSSwiftype\Tests\Extensions;
 
 use Exception;
 use Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension;
-use Ichaber\SSSwiftype\Extensions\SwiftypeSiteTreeCrawlerExtension;
 use Ichaber\SSSwiftype\Tests\Fake\SwiftypeFile;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
-Use SilverStripe\Assets\File;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -289,7 +286,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         $this->assertArrayNotHasKey($key, $urlsToCrawl);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         TestAssetStore::reset();
         parent::tearDown();

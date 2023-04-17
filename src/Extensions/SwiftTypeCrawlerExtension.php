@@ -3,7 +3,6 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use Ichaber\SSSwiftype\Service\SwiftypeCrawler;
-use SilverStripe\Assets\File;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Control\Director;
@@ -19,10 +18,8 @@ class SwiftTypeCrawlerExtension extends DataExtension
      * Urls to crawl
      *
      * array keyed by getOwnerKey
-     *
-     * @var array
      */
-    private $urlsToCrawl = [];
+    private array $urlsToCrawl = [];
 
     public function setUrlsToCrawl(array $urls): void
     {
@@ -157,7 +154,6 @@ class SwiftTypeCrawlerExtension extends DataExtension
 
         // Set us to a LIVE stage/reading_mode
         $this->withVersionContext(function () use (&$urls) {
-            $owner = $this->getOwner();
             $key = $this->getOwnerKey();
 
             // We can't do anything if we don't have a key to use
@@ -250,8 +246,8 @@ class SwiftTypeCrawlerExtension extends DataExtension
     }
 
     /**
-     * Return the link to be indexed, by default this will call {@link AbsoluteLink()}. Can be overriden to use a
-     * different linking method.
+     * Return the link to be indexed, by default this will call {@link AbsoluteLink()} on the published/live
+     * record if it exists. Can be overriden to use a different linking method.
      *
      * @throws \InvalidArgumentException if owner does not implement {@link AbsoluteLink()}
      */
@@ -261,7 +257,15 @@ class SwiftTypeCrawlerExtension extends DataExtension
             throw new \InvalidArgumentException('Invalid object passed, object must implement AbsoluteLink()');
         }
 
-        return $this->getOwner()->AbsoluteLink();
+        $live = Versioned::get_by_stage(get_class($this->getOwner()), Versioned::LIVE)->byID($this->getOwner()->ID);
+
+        if ($live) {
+            $link = $live->AbsoluteLink();
+        } else {
+            $link = null;
+        }
+
+        return $link;
     }
 
     /**

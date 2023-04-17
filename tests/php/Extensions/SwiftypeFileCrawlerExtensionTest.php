@@ -23,18 +23,12 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
      */
     protected static $fixture_file = 'SwiftypeFileCrawlerExtensionTest.yml';
 
-    /**
-     * expected array of files to be indexed
-     *
-     * @var string[]
-     */
-    protected $expectedUrls = [
-        'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy.pdf',
-    ];
-
     public function setUp(): void
     {
         parent::setUp();
+
+        // File tests should be run in draft stage
+        Versioned::set_stage(Versioned::DRAFT);
 
         // Make sure that our cache is cleared between tests
         /** @var SwiftypeFileCrawlerExtension $crawlerExtension */
@@ -69,6 +63,10 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         // Publish single so that Urls to crawl is populated
         $file->publishSingle();
 
+        $expectedUrls = [
+            'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy.pdf',
+        ];
+
         // Grab the Urls that we expect to have been collated
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
         $urlsToCrawl = $file->getUrlsToCrawl();
@@ -87,7 +85,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertEquals($this->expectedUrls, $urls, '', 0.0, 10, true);
+        $this->assertEquals($expectedUrls, $urls, '', 0.0, 10, true);
     }
 
     /**
@@ -113,6 +111,10 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         // now we call the service to remove this file from index
         $file->doUnpublish();
 
+        $expectedUrls = [
+            'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy.pdf',
+        ];
+
         // Grab the Urls that we expect to have been collated
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
         $urlsToCrawl = $file->getUrlsToCrawl();
@@ -131,7 +133,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertEquals($this->expectedUrls, $urls, '', 0.0, 10, true);
+        $this->assertEquals($expectedUrls, $urls, '', 0.0, 10, true);
     }
 
     /**
@@ -154,7 +156,6 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         $file->publishSingle();
 
         // Grab the Urls that we expect to have been collated
-        $urlsToCrawl = $file->getUrlsToCrawl();
         $this->assertEquals($urls, $file->getUrlsToCrawl());
     }
 
@@ -197,6 +198,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
      */
     public function testUrlsToCrawlSegmentChanged(): void
     {
+
         /** @var SwiftypeFile $file */
         $file = $this->objFromFixture(SwiftypeFile::class, 'file_pdf');
         $sourcePath = __DIR__ . '/../Fixtures/' . $file->Name;
@@ -208,7 +210,6 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
 
         // Make sure our file is published before we begin
         $file->publishSingle();
-
         $key = str_replace('\\', '', $file->ClassName . $file->ID);
 
         // Make sure our cache is flushed from the above publishing
@@ -221,18 +222,15 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
          *  that our old and new file URL's exist in the array that is sent for reindexing.
          */
         // Update our URL Segment
-        Versioned::withVersionedMode(function () use ($file) {
-            Versioned::set_reading_mode('Stage.Stage');
-            $file->renameFile('dummy-new.pdf');
-        });
+        $file->renameFile('dummy-new.pdf');
 
         // publish our file again to get new URL.
         $file->publishSingle();
 
         // We expect two URL's now. One from before the file rename change, and one from after it
-        $this->expectedUrls = [
-            'old_file' => 'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy.pdf',
-            'new_file' => 'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy-new.pdf',
+        $expectedUrls = [
+            'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy.pdf',
+            'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy-new.pdf',
         ];
 
         // Grab the Urls that we expect to have been collated
@@ -252,8 +250,9 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertContains($this->expectedUrls['old_file'], $urls);
-        $this->assertContains($this->expectedUrls['new_file'], $urls);
+        // Assert that the $expectedUrls is a subset of $urls
+        $assertion = array_intersect($expectedUrls, $urls) === $expectedUrls;
+        $this->assertTrue($assertion);
     }
 
     public function testUrlsToCrawlCacheCleared(): void

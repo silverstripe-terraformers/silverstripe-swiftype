@@ -4,14 +4,6 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ichaber/silverstripe-swiftype/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ichaber/silverstripe-swiftype/?branch=master)
 [![codecov](https://codecov.io/gh/ichaber/silverstripe-swiftype/branch/master/graph/badge.svg)](https://codecov.io/gh/ichaber/silverstripe-swiftype)
 
-# *WARNING*
-
-This module is still under development, trying to standardize existing custom code and is currently tailored towards
-using the Swiftype crawler for indexing.
-
-The ultimate goal is to have a drop in module for every silverstripe-swiftype project and eventually feed it back into
-the silverstripe space.
-
 ## Installation
 
 Install with Composer:

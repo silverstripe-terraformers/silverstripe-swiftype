@@ -4,7 +4,6 @@ namespace Ichaber\SSSwiftype\Tests\Fake;
 
 use Ichaber\SSSwiftype\Extensions\SwiftypeMetaTagContentExtension;
 use Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension;
-use Ichaber\SSSwiftype\Tests\Extensions\SwiftypeMetaTagContentExtensionTest;
 use SilverStripe\Assets\File;
 use SilverStripe\Dev\TestOnly;
 
@@ -26,12 +25,12 @@ class SwiftypeFile extends File implements TestOnly
     ];
 
     /**
-     * config setting to whitelist which files can be indexed.
+     * config setting to allow which files can be indexed.
      * Defaults to 'pdf' for our unit tests.
      *
      * @var string[]
      */
-    private static $reindex_files_whitelist = ['pdf'];
+    private static $reindex_allowed_extensions = ['pdf'];
 
     /**
      * This needs to be set in your test.

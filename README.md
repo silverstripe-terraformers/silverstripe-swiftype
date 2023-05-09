@@ -160,13 +160,17 @@ SilverStripe\CMS\Model\File:
   extensions:
     - Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension
 ```
-There is also a config to whitelist certain file types from being indexed/reindexed.
+
+There is also a config to allow certain file types from being indexed/reindexed.
  ```yml
 Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension:
-  reindex_files_whitelist:
+  reindex_allowed_extensions:
     - pdf
  ```
-> NB: by default this config does not set any whitelisting.
+> NB: by default this config does not set any extensions to be indexed.
+
+## Indexing custom DataObjects
+If you want to index your own custom DataObjects, simply create your own crawler extension by extending 
 
 ## Adding your own Meta Tags
 

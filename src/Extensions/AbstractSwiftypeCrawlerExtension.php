@@ -10,9 +10,9 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Versioned\Versioned;
 
 /**
- * @property DataObject|$this $owner
+ * @method DataObject|$this getOwner()
  */
-class SwiftTypeCrawlerExtension extends DataExtension
+abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
 {
     /**
      * Urls to crawl
@@ -246,35 +246,14 @@ class SwiftTypeCrawlerExtension extends DataExtension
     }
 
     /**
-     * Return the link to be indexed, by default this will call {@link AbsoluteLink()} on the published/live
-     * record if it exists. Can be overriden to use a different linking method.
-     *
-     * @throws \InvalidArgumentException if owner does not implement {@link AbsoluteLink()}
+     * Return the absolute link to the record, if the record is versioned return the live link.
      */
-    protected function getOwnerLink(): ?string
-    {
-        if (!method_exists($this->getOwner(), 'AbsoluteLink')) {
-            throw new \InvalidArgumentException('Invalid object passed, object must implement AbsoluteLink()');
-        }
-
-        $live = Versioned::get_by_stage(get_class($this->getOwner()), Versioned::LIVE)->byID($this->getOwner()->ID);
-
-        if ($live) {
-            $link = $live->AbsoluteLink();
-        } else {
-            $link = null;
-        }
-
-        return $link;
-    }
+    abstract protected function getOwnerLink(): ?string;
 
     /**
-     * Extend this method in order to check if a record can be indexed. Defaults to true.
+     * Return true if an record can be indexed.
      */
-    protected function recordCanBeIndexed(): bool
-    {
-        return true;
-    }
+    abstract protected function recordCanBeIndexed(): bool;
 
     /**
      * Sets the version context to Live as that's what crawlers will (normally) see

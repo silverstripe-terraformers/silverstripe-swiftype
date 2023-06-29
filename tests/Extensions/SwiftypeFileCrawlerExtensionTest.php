@@ -31,7 +31,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         $crawlerExtension->clearCacheAll();
 
         // Set our config to not clear caches after un/publish, so that we can easily fetch the Urls for our test
-        Config::inst()->update(
+        Config::inst()->set(
             SwiftypeFileCrawlerExtension::class,
             'clear_cache_disabled',
             true
@@ -253,7 +253,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     public function testUrlsToCrawlCacheCleared(): void
     {
         // Since asserting cache is cleared we want to reenable cache for this test.
-        Config::inst()->update(
+        Config::inst()->set(
             SwiftypeFileCrawlerExtension::class,
             'clear_cache_disabled',
             false

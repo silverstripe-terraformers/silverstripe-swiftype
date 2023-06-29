@@ -143,6 +143,27 @@ SilverStripe\CMS\Model\SiteTree:
     - Ichaber\SSSwiftype\Extensions\SwiftypeMetaTagContentExtension
 ```
 
+### Indexing Files
+If you are using the Swiftype Crawler, and would like to add "re-crawl" actions after your Files un/publish, you can
+apply `SwiftypeFileCrawlerExtension` to `File` (or another model of your choice).
+
+```yml
+SilverStripe\CMS\Model\File:
+  extensions:
+    - Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension
+```
+
+There is also a config to allow certain file types from being indexed/reindexed.
+ ```yml
+Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension:
+  reindex_allowed_extensions:
+    - pdf
+ ```
+> NB: by default this config does not set any extensions to be indexed.
+
+## Indexing custom DataObjects
+If you want to index your own custom DataObjects, simply create your own crawler extension by extending 
+
 ## Adding your own Meta Tags
 
 You can easily add your own classes to your objects (see [Installation](#Installation)).

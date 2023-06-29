@@ -90,7 +90,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
         $key = str_replace('\\', '', $page->ClassName . $page->ID);
 
         // Make sure we don't have any Cache set from the above publishing
-        $page->flushCache();
+        $page->clearCacheAll();
 
         $page->doUnpublish();
 
@@ -139,7 +139,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
         $key = str_replace('\\', '', $page->ClassName . $page->ID);
 
         // Make sure our cache is flushed from the above publishing
-        $page->flushCache();
+        $page->clearCacheAll();
 
         // Update our URL Segment
         $page->URLSegment = 'page3Changed';

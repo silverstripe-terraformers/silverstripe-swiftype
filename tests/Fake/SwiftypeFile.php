@@ -3,20 +3,27 @@
 namespace Ichaber\SSSwiftype\Tests\Fake;
 
 use Ichaber\SSSwiftype\Extensions\SwiftypeMetaTagContentExtension;
-use Ichaber\SSSwiftype\Extensions\SwiftypeSiteTreeCrawlerExtension;
-use Ichaber\SSSwiftype\Tests\Extensions\SwiftypeMetaTagContentExtensionTest;
-use SilverStripe\CMS\Model\SiteTree;
+use Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension;
+use SilverStripe\Assets\File;
 use SilverStripe\Dev\TestOnly;
 
 /**
  * @mixin SwiftypeMetaTagContentExtension
- * @mixin SwiftypeSiteTreeCrawlerExtension
+ * @mixin SwiftypeFileCrawlerExtension
  */
-class SwiftypeSiteTree extends SiteTree implements TestOnly
+class SwiftypeFile extends File implements TestOnly
 {
     private static array $extensions = [
         SwiftypeMetaTagContentExtension::class,
-        SwiftypeSiteTreeCrawlerExtension::class,
+        SwiftypeFileCrawlerExtension::class,
+    ];
+
+    /**
+     * config setting to allow which files can be indexed.
+     * Defaults to 'pdf' for our unit tests.
+     */
+    private static array $reindex_allowed_extensions = [
+        'pdf',
     ];
 
     /**

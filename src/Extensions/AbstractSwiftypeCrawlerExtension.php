@@ -3,7 +3,7 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use Ichaber\SSSwiftype\Service\SwiftypeCrawler;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
@@ -12,7 +12,7 @@ use SilverStripe\Versioned\Versioned;
 /**
  * @method DataObject|$this getOwner()
  */
-abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
+abstract class AbstractSwiftypeCrawlerExtension extends Extension
 {
     /**
      * Urls to crawl

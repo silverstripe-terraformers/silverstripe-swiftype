@@ -4,14 +4,14 @@ namespace Ichaber\SSSwiftype\Extensions;
 
 use Exception;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagInterface;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 
 /**
  * @property DataObject|$this $owner
  */
-class SwiftypeMetaTagContentExtension extends DataExtension
+class SwiftypeMetaTagContentExtension extends Extension
 {
     /**
      * @return DBField

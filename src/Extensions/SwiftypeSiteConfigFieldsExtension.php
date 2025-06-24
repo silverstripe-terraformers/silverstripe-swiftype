@@ -6,7 +6,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
 /**
  * Some default things to set up
@@ -18,7 +18,7 @@ use SilverStripe\ORM\DataExtension;
  * @property string $SwiftypeDomainID
  * @property string $SwiftypeEngineSlug
  */
-class SwiftypeSiteConfigFieldsExtension extends DataExtension
+class SwiftypeSiteConfigFieldsExtension extends Extension
 {
     private static array $db = [
         'SwiftypeEnabled' => 'Boolean',

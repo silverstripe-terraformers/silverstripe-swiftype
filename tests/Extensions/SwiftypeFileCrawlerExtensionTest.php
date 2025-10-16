@@ -7,7 +7,6 @@ use Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension;
 use Ichaber\SSSwiftype\Tests\Fake\SwiftypeFile;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Versioned\Versioned;
 
@@ -18,7 +17,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
      */
     protected static $fixture_file = 'SwiftypeFileCrawlerExtensionTest.yml';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -27,11 +26,11 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
 
         // Make sure that our cache is cleared between tests
         /** @var SwiftypeFileCrawlerExtension $crawlerExtension */
-        $crawlerExtension = Injector::inst()->get(SwiftypeFileCrawlerExtension::class);
+        $crawlerExtension = singleton(SwiftypeFileCrawlerExtension::class);
         $crawlerExtension->clearCacheAll();
 
         // Set our config to not clear caches after un/publish, so that we can easily fetch the Urls for our test
-        Config::inst()->set(
+        Config::modify()->set(
             SwiftypeFileCrawlerExtension::class,
             'clear_cache_disabled',
             true
@@ -41,6 +40,13 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         TestAssetStore::activate('SwiftypeFileCrawlerExtensionTest');
     }
 
+    protected function tearDown(): void
+    {
+        TestAssetStore::reset();
+
+        parent::tearDown();
+    }
+
     /**
      * @throws Exception
      */
@@ -48,6 +54,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     {
         /** @var SwiftypeFile $file */
         $file = $this->objFromFixture(SwiftypeFile::class, 'file_pdf');
+
         $sourcePath = __DIR__ . '/../Fixtures/' . $file->Name;
         $file->setFromLocalFile($sourcePath, $file->Filename);
 
@@ -80,7 +87,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertEquals($expectedUrls, $urls, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedUrls, $urls);
     }
 
     /**
@@ -90,6 +97,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     {
         /** @var SwiftypeFile $file */
         $file = $this->objFromFixture(SwiftypeFile::class, 'file_pdf');
+
         $sourcePath = __DIR__ . '/../Fixtures/' . $file->Name;
         $file->setFromLocalFile($sourcePath, $file->Filename);
 
@@ -128,7 +136,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertEquals($expectedUrls, $urls, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedUrls, $urls);
     }
 
     /**
@@ -140,6 +148,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     {
         /** @var SwiftypeFile $file */
         $file = $this->objFromFixture(SwiftypeFile::class, 'file_jpg');
+
         $sourcePath = __DIR__ . '/../Fixtures/' . $file->Name;
         $file->setFromLocalFile($sourcePath, $file->Filename);
 
@@ -163,6 +172,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     {
         /** @var SwiftypeFile $file */
         $file = $this->objFromFixture(SwiftypeFile::class, 'file_jpg');
+
         $sourcePath = __DIR__ . '/../Fixtures/' . $file->Name;
         $file->setFromLocalFile($sourcePath, $file->Filename);
 
@@ -193,9 +203,9 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
      */
     public function testUrlsToCrawlSegmentChanged(): void
     {
-
         /** @var SwiftypeFile $file */
         $file = $this->objFromFixture(SwiftypeFile::class, 'file_pdf');
+
         $sourcePath = __DIR__ . '/../Fixtures/' . $file->Name;
         $file->setFromLocalFile($sourcePath, $file->Filename);
 
@@ -222,7 +232,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
         // publish our file again to get new URL.
         $file->publishSingle();
 
-        // We expect two URL's now. One from before the file rename change, and one from after it
+        // We expect two URLs now. One from before the file rename change, and one from after it
         $expectedUrls = [
             'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy.pdf',
             'localhost/assets/SwiftypeFileCrawlerExtensionTest/dummy-new.pdf',
@@ -253,7 +263,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
     public function testUrlsToCrawlCacheCleared(): void
     {
         // Since asserting cache is cleared we want to reenable cache for this test.
-        Config::inst()->set(
+        Config::modify()->set(
             SwiftypeFileCrawlerExtension::class,
             'clear_cache_disabled',
             false
@@ -261,6 +271,7 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
 
         /** @var SwiftypeFile $file */
         $file = $this->objFromFixture(SwiftypeFile::class, 'file_pdf');
+
         $sourcePath = __DIR__ . '/../Fixtures/' . $file->Name;
         $file->setFromLocalFile($sourcePath, $file->Filename);
 
@@ -278,11 +289,5 @@ class SwiftypeFileCrawlerExtensionTest extends SapphireTest
 
         // Check that the key exists for our page
         $this->assertArrayNotHasKey($key, $urlsToCrawl);
-    }
-
-    public function tearDown(): void
-    {
-        TestAssetStore::reset();
-        parent::tearDown();
     }
 }

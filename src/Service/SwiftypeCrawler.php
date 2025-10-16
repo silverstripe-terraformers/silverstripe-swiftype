@@ -5,7 +5,6 @@ namespace Ichaber\SSSwiftype\Service;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Injector\Injector;
 use Throwable;
 
 /**
@@ -15,22 +14,13 @@ class SwiftypeCrawler
 {
     use Injectable;
 
-    const SWIFTYPE_API = 'https://api.swiftype.com/api/v1/engines/%s/domains/%s/crawl_url.json';
+    protected const string SWIFTYPE_API = 'https://api.swiftype.com/api/v1/engines/%s/domains/%s/crawl_url.json';
 
-    /**
-     * @var Client
-     */
-    private $client;
+    private ?Client $client;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private ?LoggerInterface $logger = null;
 
-    /**
-     * @var array
-     */
-    private $messages = [];
+    private array $messages = [];
 
     public function __construct(?Client $client = null)
     {
@@ -46,7 +36,7 @@ class SwiftypeCrawler
      *
      * @param mixed|null $additionalData If set, we assume that you want to populate your Credentials through extension
      */
-    public function send(string $url, $additionalData = null): bool
+    public function send(string $url, mixed $additionalData = null): bool
     {
         $credentials = SwiftypeCredentials::create($additionalData);
 
@@ -58,7 +48,7 @@ class SwiftypeCrawler
         }
 
         $swiftypeEndpoint = sprintf(
-            self::SWIFTYPE_API,
+            SwiftypeCrawler::SWIFTYPE_API,
             $credentials->getEngineSlug(),
             $credentials->getDomainID()
         );
@@ -88,7 +78,7 @@ class SwiftypeCrawler
         }
 
         // invalid response code
-        if (strpos((string) $response->getStatusCode(), '2') !== 0) {
+        if (!str_starts_with((string) $response->getStatusCode(), '2')) {
             $message = sprintf(
                 "Swiftype Crawl request failed - invalid response code \n%s\n%s\n%s",
                 $response->getStatusCode(),
@@ -130,7 +120,7 @@ class SwiftypeCrawler
     protected function getLogger(): LoggerInterface
     {
         if (!$this->logger) {
-            $this->logger = Injector::inst()->get(LoggerInterface::class);
+            $this->logger = singleton(LoggerInterface::class);
         }
 
         return $this->logger;

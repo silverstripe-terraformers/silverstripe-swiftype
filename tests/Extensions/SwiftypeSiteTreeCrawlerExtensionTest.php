@@ -6,7 +6,6 @@ use Exception;
 use Ichaber\SSSwiftype\Extensions\SwiftypeSiteTreeCrawlerExtension;
 use Ichaber\SSSwiftype\Tests\Fake\SwiftypeSiteTree;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 
 class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
@@ -16,13 +15,13 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
      */
     protected static $fixture_file = 'SwiftypeSiteTreeCrawlerExtensionTest.yml';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         // Make sure that our cache is cleared between tests
         /** @var SwiftypeSiteTreeCrawlerExtension $crawlerExtension */
-        $crawlerExtension = Injector::inst()->get(SwiftypeSiteTreeCrawlerExtension::class);
+        $crawlerExtension = singleton(SwiftypeSiteTreeCrawlerExtension::class);
         $crawlerExtension->clearCacheAll();
     }
 
@@ -67,7 +66,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertEquals($expectedUrls, $urls, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedUrls, $urls);
     }
 
     /**
@@ -116,7 +115,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertEquals($expectedUrls, $urls, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedUrls, $urls);
     }
 
     /**
@@ -170,7 +169,7 @@ class SwiftypeSiteTreeCrawlerExtensionTest extends SapphireTest
             $urls[] = $url;
         }
 
-        $this->assertEquals($expectedUrls, $urls, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedUrls, $urls);
     }
 
     public function testUrlsToCrawlCacheCleared(): void

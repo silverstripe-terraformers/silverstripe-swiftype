@@ -3,16 +3,16 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use Ichaber\SSSwiftype\Service\SwiftypeCrawler;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Extension;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 
 /**
- * @method DataObject|$this getOwner()
+ * @extends Extension<DataObject>
  */
-abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
+abstract class AbstractSwiftypeCrawlerExtension extends Extension
 {
     /**
      * Urls to crawl
@@ -21,7 +21,7 @@ abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
      */
     private array $urlsToCrawl = [];
 
-    public function setUrlsToCrawl(array $urls)
+    public function setUrlsToCrawl(array $urls): void
     {
         $this->urlsToCrawl = $urls;
     }
@@ -35,17 +35,19 @@ abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
      * We need to collate Urls before we write, just in case an author has changed the File's name (URL). If they
      * have, then we need to request Swiftype to reindex both the old Url (which should then be marked by Swiftype
      * as a 404), and the new Url
+     * Extension point in @see DataObject::onBeforeWrite()
      */
-    public function onBeforeWrite(): void
+    protected function onBeforeWrite(): void
     {
         $this->collateUrls();
     }
 
     /**
-     * After a publish has occurred, we can collate and process immediately (no need to split things out like during
-     * an unpublish)
+     * After a "publish" action has occurred, we can collate and process immediately
+     * No need to split things out like during an un-publish
+     * Extension point in @see Versioned::publishSingle()
      */
-    public function onAfterPublish(&$original): void
+    protected function onAfterPublish(?DataObject &$original): void
     {
         $this->collateUrls();
         $this->processCollatedUrls();
@@ -65,16 +67,18 @@ abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
     /**
      * We need to collate the Urls to be purged *before* we complete the unpublish action (otherwise, the LIVE Urls
      * will no longer be available, since the page is now unpublished)
+     * Extension point in @see Versioned::doUnpublish()
      */
-    public function onBeforeUnpublish(): void
+    protected function onBeforeUnpublish(): void
     {
         $this->collateUrls();
     }
 
     /**
-     * After the unpublish has completed, we can now request Swiftype to reindex the Urls that we collated
+     * After the un-publish has completed, we can now request Swiftype to reindex the Urls that we collated
+     * Extension point in @see Versioned::doUnpublish()
      */
-    public function onAfterUnpublish(): void
+    protected function onAfterUnpublish(): void
     {
         $this->processCollatedUrls();
 
@@ -94,7 +98,7 @@ abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
      * You may need to clear the cache at some point during your particular process
      *
      * Reset all Urls for any/all objects that might be in the cache (keeping in mind that Extensions are singleton,
-     * so the UrlsToCache could be accessed via singleton and it could contain Urls for many owner objects)
+     * so the UrlsToCache could be accessed via singleton, and it could contain Urls for many owner objects)
      *
      * We don't use flushCache (which is called from DataObject) because this is called between write and un/publish,
      * and we need our cache to persist through these states
@@ -108,7 +112,7 @@ abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
      * You may need to clear the cache at some point during your particular process
      *
      * Reset only the Urls related to this particular owner object (keeping in mind that Extensions are singleton,
-     * so the UrlsToCache could be accessed via singleton and it could contain Urls for many owner objects)
+     * so the UrlsToCache could be accessed via singleton, and it could contain Urls for many owner objects)
      *
      * We don't use flushCache (which is called from DataObject) because this is called between write and un/publish,
      * and we need our cache to persist through these states
@@ -240,9 +244,7 @@ abstract class AbstractSwiftypeCrawlerExtension extends DataExtension
             return null;
         }
 
-        $key = str_replace('\\', '', $owner->ClassName . $owner->ID);
-
-        return $key;
+        return str_replace('\\', '', $owner->ClassName . $owner->ID);
     }
 
     /**

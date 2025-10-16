@@ -3,7 +3,7 @@ Name: swiftype_tags
 ---
 # Default date format for all Tags. You can set override this for all Tags, or set it differently for different classes
 Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTag:
-  date_format: YYYY-MM-dd HH:mm:ss
+  date_format: 'YYYY-MM-dd HH:mm:ss'
 Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagRobots:
   no_index: true
   no_follow: false

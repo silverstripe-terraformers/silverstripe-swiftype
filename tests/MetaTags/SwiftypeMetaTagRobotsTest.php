@@ -2,6 +2,7 @@
 
 namespace Ichaber\SSSwiftype\Tests\Extensions;
 
+use Exception;
 use Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagRobots;
 use Ichaber\SSSwiftype\Tests\Fake\SwiftypeSiteTree;
 use SilverStripe\Core\Config\Config;
@@ -14,6 +15,9 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
      */
     protected static $fixture_file = 'SwiftypeMetaTagTest.yml';
 
+    /**
+     * @throws Exception
+     */
     public function testRobotsTagNoIndex(): void
     {
         Config::modify()->set(
@@ -49,6 +53,9 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
         $this->assertEquals($mock, $output);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRobotsTagNoFollow(): void
     {
         Config::modify()->set(
@@ -84,6 +91,9 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
         $this->assertEquals($mock, $output);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRobotsTagBoth(): void
     {
         Config::modify()->set(
@@ -119,6 +129,9 @@ class SwiftypeMetaTagRobotsTest extends SapphireTest
         $this->assertEquals($mock, $output);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRobotsTagNone(): void
     {
         Config::modify()->set(

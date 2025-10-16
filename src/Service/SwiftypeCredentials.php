@@ -5,7 +5,6 @@ namespace Ichaber\SSSwiftype\Service;
 use Psr\Log\LoggerInterface;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
@@ -16,35 +15,17 @@ class SwiftypeCredentials
     use Extensible;
     use Injectable;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private ?LoggerInterface $logger = null;
 
-    /**
-     * @var bool
-     */
-    private $enabled = false;
+    private bool $enabled = false;
 
-    /**
-     * @var string|null
-     */
-    private $engineSlug;
+    private ?string $engineSlug;
 
-    /**
-     * @var string|null
-     */
-    private $domainID;
+    private ?string $domainID;
 
-    /**
-     * @var string|null
-     */
-    private $apiKey;
+    private ?string $apiKey;
 
-    /**
-     * @var string|null
-     */
-    private $message;
+    private ?string $message;
 
     public function isEnabled(): bool
     {
@@ -101,7 +82,7 @@ class SwiftypeCredentials
      *
      * @param mixed|null $additionalData If set, we assume that you want to populate your Credentials through extension
      */
-    public function __construct($additionalData = null)
+    public function __construct(mixed $additionalData = null)
     {
         if ($additionalData !== null) {
             // You've supplied the class with $additionalData, so, please populate your Credentials data through the
@@ -109,7 +90,6 @@ class SwiftypeCredentials
             $this->invokeWithExtensions('populateCredentials', $additionalData);
         } else {
             // Default functionality is to grab Credentials from SiteConfig
-            /** @var SiteConfig $config */
             $config = SiteConfig::current_site_config();
 
             // You might want to implement this via Environment variables or something. Just make sure SiteConfig has
@@ -151,8 +131,6 @@ class SwiftypeCredentials
             $this->disable(
                 'Swiftype API Key has not been set. Settings > Swiftype Search > Swiftype Production API Key'
             );
-
-            return;
         }
     }
 
@@ -170,7 +148,7 @@ class SwiftypeCredentials
     protected function getLogger(): LoggerInterface
     {
         if (!$this->logger) {
-            $this->logger = Injector::inst()->get(LoggerInterface::class);
+            $this->logger = singleton(LoggerInterface::class);
         }
 
         return $this->logger;

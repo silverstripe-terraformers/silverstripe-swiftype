@@ -4,8 +4,8 @@ namespace Ichaber\SSSwiftype\Tests\Service;
 
 use Ichaber\SSSwiftype\Service\SwiftypeCredentials;
 use Ichaber\SSSwiftype\Extensions\SwiftypeSiteConfigFieldsExtension;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\SiteConfig\SiteConfig;
 
 class SwiftypeCredentialsTest extends SapphireTest

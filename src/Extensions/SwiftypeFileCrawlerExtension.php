@@ -3,28 +3,29 @@
 namespace Ichaber\SSSwiftype\Extensions;
 
 use SilverStripe\Assets\File;
+use SilverStripe\Core\Extension;
 use SilverStripe\Versioned\Versioned;
 
 /**
- * @method File|$this getOwner()
+ * @extends Extension<File>
  */
 class SwiftypeFileCrawlerExtension extends AbstractSwiftypeCrawlerExtension
 {
     /**
-     * @var array List of allowed file extensions to be reindexed.
+     * List of allowed file extensions to be re-indexed.
+     *
+     * @var array
      */
     private static array $reindex_allowed_extensions = [];
 
     protected function getOwnerLink(): ?string
     {
+        $owner = $this->getOwner();
+
         /** @var File $live */
-        $live = Versioned::get_by_stage(File::class, Versioned::LIVE)->byID($this->getOwner()->ID);
+        $live = Versioned::get_by_stage(File::class, Versioned::LIVE)->byID($owner->ID);
 
-        if ($live) {
-            return $live->AbsoluteLink();
-        }
-
-        return null;
+        return $live?->AbsoluteLink();
     }
 
     /**
@@ -33,9 +34,11 @@ class SwiftypeFileCrawlerExtension extends AbstractSwiftypeCrawlerExtension
      */
     protected function recordCanBeIndexed(): bool
     {
+        $owner = $this->getOwner();
+
         // only reindex file types we need.
         $fileType = File::get_file_extension($this->getOwner()->Filename);
 
-        return in_array($fileType, $this->getOwner()->config()->get('reindex_allowed_extensions'), true);
+        return in_array($fileType, $owner->config()->get('reindex_allowed_extensions'), true);
     }
 }

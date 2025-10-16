@@ -47,12 +47,12 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
     /**
      * @return string|int|null
      */
-    protected function getFieldValue(DataObject $dataObject)
+    protected function getFieldValue(DataObject $dataObject): mixed
     {
         // Check if a dev has overridden the default $fieldName with a configuration value
         $fieldName = Config::inst()->get(static::class, 'field_name');
 
-        // No specifc field name set in configuration
+        // No specific field name set in configuration
         if ($fieldName === null) {
             // Fall back to using the default field name
             $fieldName = $this->fieldName;
@@ -66,7 +66,7 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
         // Check if the DataObject has a method matching the field name
         if ($dataObject->hasMethod($fieldName)) {
             // Return it
-            return $dataObject->$fieldName();
+            return $dataObject->{$fieldName}();
         }
 
         // If no method exists, then let's check if it has value
@@ -79,7 +79,7 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
                 // Someone somewhere has overridden the default date format with an empty value
                 if (!$dateFormat) {
                     // The assumption is that if they've done that, then they must want the field simply returned
-                    return $dataObject->$fieldName;
+                    return $dataObject->{$fieldName};
                 }
 
                 // Return the date in the format specified in configuration
@@ -87,7 +87,7 @@ abstract class SwiftypeMetaTag implements SwiftypeMetaTagInterface
             }
 
             // It's a "standard" value, so just return it
-            return $dataObject->$fieldName;
+            return $dataObject->{$fieldName};
         }
 
         // We couldn't find anything

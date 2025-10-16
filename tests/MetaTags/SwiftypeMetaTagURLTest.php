@@ -19,7 +19,7 @@ class SwiftypeMetaTagURLTest extends SapphireTest
     /**
      * @throws Exception
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         DBDatetime::set_mock_now('2018-03-01 14:00:00');
 

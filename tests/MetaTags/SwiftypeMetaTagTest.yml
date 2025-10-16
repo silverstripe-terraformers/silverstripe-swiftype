@@ -1,10 +1,10 @@
 Ichaber\SSSwiftype\Tests\Fake\SwiftypeSiteTree:
   page1:
-    URLSegment: page1
-    Title: Page 1
-    MetaDescription: Page 1 Meta Description
+    URLSegment: 'page1'
+    Title: 'Page 1'
+    MetaDescription: 'Page 1 Meta Description'
   page2:
-    URLSegment: page2
-    Title: Page 2
-    MetaDescription: Page 2 Meta Description
+    URLSegment: 'page2'
+    Title: 'Page 2'
+    MetaDescription: 'Page 2 Meta Description'
     ShowInSearch: 0

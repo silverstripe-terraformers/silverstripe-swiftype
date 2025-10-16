@@ -19,7 +19,7 @@ class SwiftypeMetaTagPublishedAtTest extends SapphireTest
     /**
      * @throws Exception
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         DBDatetime::set_mock_now('2018-03-01 14:00:00');
 
@@ -31,8 +31,11 @@ class SwiftypeMetaTagPublishedAtTest extends SapphireTest
      */
     public function testMetaTagOutput(): void
     {
-        Config::modify()->set(SwiftypeSiteTree::class, 'swiftype_meta_tag_classes', [SwiftypeMetaTagPublishedAt::class]);
-        Config::modify()->set(SwiftypeMetaTagPublishedAt::class, 'date_format', 'YYYY-MM-dd');
+        Config::modify()
+            ->set(SwiftypeSiteTree::class, 'swiftype_meta_tag_classes', [
+                SwiftypeMetaTagPublishedAt::class,
+            ])
+            ->set(SwiftypeMetaTagPublishedAt::class, 'date_format', 'YYYY-MM-dd');
 
         /** @var SwiftypeSiteTree $page */
         $page = $this->objFromFixture(SwiftypeSiteTree::class, 'page1');

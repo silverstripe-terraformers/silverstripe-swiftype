@@ -114,7 +114,7 @@ class SwiftypeCrawlerTest extends SapphireTest
         $crawler = SwiftypeCrawler::create($client);
 
         $url = 'https://www.someurl.com';
-        // Lets run it and get a not good response
+        // Let's run it and get a not good response
         $expectedMessage = sprintf(
             'Exception %s for url: %s message: Error Communicating with Server',
             RequestException::class,

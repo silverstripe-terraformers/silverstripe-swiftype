@@ -19,10 +19,7 @@ class SwiftypeMetaTagRobots extends SwiftypeMetaTag
         return sprintf('<meta name="robots" content="%s">', $value);
     }
 
-    /**
-     * @return int|string|null
-     */
-    protected function getFieldValue(DataObject $dataObject)
+    protected function getFieldValue(DataObject $dataObject): mixed
     {
         // This tag is only available for SiteTree objects
         if (!$dataObject instanceof SiteTree) {

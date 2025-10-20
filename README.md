@@ -162,7 +162,7 @@ Ichaber\SSSwiftype\Extensions\SwiftypeFileCrawlerExtension:
 > NB: by default this config does not set any extensions to be indexed.
 
 ## Indexing custom DataObjects
-If you want to index your own custom DataObjects, simply create your own crawler extension by extending 
+If you want to index your own custom DataObjects, simply create your own crawler extension by extending
 
 ## Adding your own Meta Tags
 
@@ -174,7 +174,7 @@ You can also feel free to extend `SwiftypeMetaTag`, if you would like access to 
 
 ## Customising the robots Meta Tag
 
-There are two configs available for the robots Meta Tag. These allow you to control whether you add `noindex` and/or 
+There are two configs available for the robots Meta Tag. These allow you to control whether you add `noindex` and/or
 `nofollow`. By befault, `noindex` is added, but we allow robots to follow.
 
 ```
@@ -198,6 +198,6 @@ Ichaber\SSSwiftype\MetaTags\SwiftypeMetaTagRobots:
 
 ## Requirements
 
- * PHP 7.1 or higher
- * SilverStripe Framework 4.x
- * SilverStripe CMS 4.x
+ * PHP 8.3 or higher
+ * SilverStripe Framework 6.x
+ * SilverStripe CMS 6.x
